@@ -1,8 +1,135 @@
+// jquery.responsive-content.js
+// copyright stephan fowlwr
+// https://github.com/stephanfowler/responsive-content
+
+// Forked from:
 // jquery.pjax.js
 // copyright chris wanstrath
 // https://github.com/defunkt/jquery-pjax
 
 (function($){
+
+$.fn.responsiveContent = function( useropts ){ 
+
+  var DEBUG = true;
+
+  var opts = $.extend(
+    {
+      widths: [ 0, 481, 768, 1024 ], // Width breakpoints.
+      forceLoad: false,              // Force an initial load. Normally only does this when width > widths[1]
+      afterLoad: function(){}        // Callback, after each content load
+    }, 
+    useropts 
+  );
+
+  var widthCurrent, 
+    nowLoading, 
+    target = this; 
+
+  conlog( "Initial width : " + $('body').width() );
+ 
+  // The lower bound of the width-range that we're in.
+  function getMinWidth() {
+    var width = opts.widths[ opts.widths.length - 1 ]; 
+    var widthTrue = $('body').width(); 
+    for( var i=1; i<opts.widths.length; i++ ) {
+      if ( widthTrue < opts.widths[i]) {
+        width = opts.widths[ i - 1 ];
+        break;
+      }   
+    }
+    return width;
+  }
+
+  // Add pjax, screen-width, and other devive info to querystr params
+  function querySpec( qstr ) {
+    var params = {};
+    params._ajax = 1;
+    params._width = widthCurrent;
+    params._touch = 'ontouchstart' in document.documentElement;
+    // Parse out params from current querystr and add them
+    qstr.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+      params[key] = value;
+    });
+    return params; 
+  }
+
+  // Initial content reloader
+  function reloadContent() {
+    // Defer loading by a short period, so as not to stack up page reloads if user resizes the window very quickly.
+    if ( ! nowLoading ) {
+      nowLoading = setTimeout( function(){ 
+        nowLoading = undefined; 
+        $.ajax({
+          url: window.location.pathname,
+          dataType: 'html',
+          data: querySpec( window.location.search ),
+          success: function(data){
+            $(target).html(data);
+            next();
+            conlog( 'Ajax initial load : min-width ' + widthCurrent + ' : ' + document.title );
+          }
+        });
+      }, 250 );
+    }
+  }
+
+  // Find the relevant "lower bound" width, as enumarated in the opts.widths array.
+  widthCurrent = getMinWidth();
+
+  // If we're greater than or equal to the first significant breakpoint, reload (larger) content
+  if ( widthCurrent >= opts.widths[1] || opts.forceLoad ) {
+    reloadContent();
+  }
+
+  // Detech a significant width change, and reload content.
+  $(window).resize(function() {
+    var needsReload = false;
+    var widthNew = getMinWidth();
+    for( var i=0; i<opts.widths.length; i++ ) {
+      if ( ( widthCurrent < opts.widths[i] && widthNew >= opts.widths[i] ) || ( widthCurrent > opts.widths[i] && widthNew <= opts.widths[i] )) { 
+        widthCurrent = opts.widths[i];
+        reloadContent();
+      }
+    }
+  });
+
+  // Bind pjax reloads to anchor tags, if history.pushState is supported
+  if ( $.support.pjax ) {
+    // Pjax-ify links. Omit those that start with a "javascript:" href directive, such as href="javascript:void(0)" 
+    $('a').live('click', function(event){
+      event.preventDefault();
+      $.pjax({
+        url: $(this).attr('href'),
+        container: target,
+        data: querySpec( $(this).attr('href') )
+      });
+    })
+
+    // Disable pjax timeout. See issue: https://github.com/defunkt/jquery-pjax/issues/129
+    $.pjax.defaults.timeout = false;
+    
+    // Fire post load actions
+    $(target).on('pjax:end', function(){
+      next();
+      conlog( 'Ajax and pushSate : min-width ' + widthCurrent + ' : ' + document.title );
+    });
+  }
+
+  // Run the after-load callback, on a zero timeout.
+  function next() {
+    setTimeout( function(){
+      opts.afterLoad();
+    });
+  }
+
+  function conlog(message) {
+    if (DEBUG && console) {
+      console.log(message);
+    }
+  }
+
+}
 
 // When called on a link, fetches the href with ajax into the
 // container specified as the first parameter or with the data-pjax
@@ -165,8 +292,6 @@ var pjax = $.pjax = function( options ) {
 
     if (!fire('pjax:beforeSend', [xhr, settings]))
       return false
-
-    options.requestUrl = parseURL(settings.url).href
   }
 
   options.complete = function(xhr, textStatus) {
@@ -414,7 +539,7 @@ function extractContainer(data, xhr, options) {
 
   // Prefer X-PJAX-URL header if it was set, otherwise fallback to
   // using the original requested url.
-  obj.url = stripPjaxParam(xhr.getResponseHeader('X-PJAX-URL') || options.requestUrl)
+  obj.url = stripPjaxParam(xhr.getResponseHeader('X-PJAX-URL') || options.url)
 
   // Attempt to parse response html into elements
   var $data = $(data)
