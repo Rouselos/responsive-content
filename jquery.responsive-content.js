@@ -106,11 +106,8 @@ $.fn.responsiveContent = function( useropts ){
 
   // Fire post load actions
   $(target).on('pjax:success', function(){
-    setTimeout( function(){
-      opts.afterLoad();
-    });
-    conlog( 'Ajax load. width:' + $(window).width() + ' step:' + widthCurrent );
-    ; 
+    conlog( 'Ajax load: ' + window.location.pathname + ' width:' + $(window).width() + ' step:' + widthCurrent );
+    opts.afterLoad();
   });
 
   function conlog(message) {
