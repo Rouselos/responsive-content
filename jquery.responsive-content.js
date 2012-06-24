@@ -16,6 +16,7 @@ $.fn.responsiveContent = function( useropts ){
       widths: [ 0, 481, 768, 1024 ],        // Screen width break-points.
       afterLoad: function(){ return this }, // Callback after each content load
       forceLoad: false,                     // Force an initial load. Normally only does this when getMinWidth > widths[0]
+      selector: 'a',                        // The selector for which anchors to pjaxify. Must only select html A tags.
       debug: false
     }, 
     useropts 
@@ -41,9 +42,8 @@ $.fn.responsiveContent = function( useropts ){
   // Add ajax, screen-width, and other device info to querystr params
   function querySpec( qstr ) {
     var params = {};
-    params._ajax = 1;
-    params._width = widthCurrent;
-    params._touch = 'ontouchstart' in document.documentElement;
+    params._rescon_width = widthCurrent;
+    params._rescon_touch = 'ontouchstart' in document.documentElement;
     // Parse out params from current querystr and add them
     qstr.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
       params[key] = value;
@@ -93,7 +93,7 @@ $.fn.responsiveContent = function( useropts ){
 
   // Pjax-ify links.  
   if ( $.support.pjax ) {
-    $('a').live('click', function(event){
+    $(opts.selector).live('click', function(event){
       event.preventDefault();
       $.pjax({
         url: $(this).attr('href'),
@@ -257,7 +257,7 @@ var pjax = $.pjax = function( options ) {
     // Without adding this secret parameter, some browsers will often
     // confuse the two.
     if (!options.data) options.data = {}
-    options.data._pjax = context.selector
+    options.data._rescon = context.selector
 
     function fire(type, args) {
       var event = $.Event(type, { relatedTarget: target })
@@ -466,15 +466,15 @@ function uniqueId() {
   return (new Date).getTime()
 }
 
-// Internal: Strips _pjax param from url
+// Internal: Strips _rescon param from url
 //
 // url - String
 //
 // Returns String.
 function stripPjaxParam(url) {
   return url
-    .replace(/\?_pjax=[^&]+&?/, '?')
-    .replace(/_pjax=[^&]+&?/, '')
+    .replace(/\?_rescon=[^&]+&?/, '?')
+    .replace(/_rescon=[^&]+&?/, '')
     .replace(/[\?&]$/, '')
 }
 
