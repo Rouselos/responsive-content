@@ -57,6 +57,7 @@ $.fn.responsiveContent = function( useropts ){
       url: window.location.pathname,
       data: querySpec( window.location.search ),
       container: target,
+      url404: opts.url404,
       push: false
     });
   }
@@ -97,7 +98,8 @@ $.fn.responsiveContent = function( useropts ){
       $.pjax({
         url: $(this).attr('href'),
         container: target,
-        data: querySpec( $(this).attr('href') )
+        data: querySpec( $(this).attr('href') ),
+        url404: opts.url404
       });
     })
   }
@@ -315,8 +317,12 @@ var pjax = $.pjax = function( options ) {
       if (oldError) oldError.apply(this, arguments)
 
       var allowed = fire('pjax:error', [xhr, textStatus, errorThrown, options])
-      if (textStatus !== 'abort' && allowed)
-        window.location = container.url
+      if (textStatus !== 'abort' && allowed) {
+        // 404 bevahiour
+        if (xhr.status === 404 && options.url404) {
+          window.location = options.url404
+        } 
+      }
     }
 
     options.success = function(data, status, xhr) {
