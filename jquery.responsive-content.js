@@ -11,13 +11,12 @@
 
 $.fn.responsiveContent = function( useropts ){ 
 
-  var DEBUG = true;
-
   var opts = $.extend(
     {
-      widths: [ 0, 481, 768, 1024 ], // Width breakpoints.
-      forceLoad: false,              // Force an initial load. Normally only does this when width > widths[1]
-      afterLoad: function(){}        // Callback, after each content load
+      widths: [ 0, 481, 768, 1024 ],        // Screen width break-points.
+      afterLoad: function(){ return this }, // Callback after each content load
+      forceLoad: false,                     // Force an initial load. Normally only does this when getMinWidth > widths[0]
+      debug: false
     }, 
     useropts 
   );
@@ -26,12 +25,10 @@ $.fn.responsiveContent = function( useropts ){
     nowLoading, 
     target = this; 
 
-  conlog( "Initial width : " + $('body').width() );
- 
   // The lower bound of the width-range that we're in.
   function getMinWidth() {
     var width = opts.widths[ opts.widths.length - 1 ]; 
-    var widthTrue = $('body').width(); 
+    var widthTrue = $(window).width(); 
     for( var i=1; i<opts.widths.length; i++ ) {
       if ( widthTrue < opts.widths[i]) {
         width = opts.widths[ i - 1 ];
@@ -41,7 +38,7 @@ $.fn.responsiveContent = function( useropts ){
     return width;
   }
 
-  // Add pjax, screen-width, and other devive info to querystr params
+  // Add ajax, screen-width, and other device info to querystr params
   function querySpec( qstr ) {
     var params = {};
     params._ajax = 1;
@@ -56,20 +53,20 @@ $.fn.responsiveContent = function( useropts ){
 
   // Initial content reloader
   function reloadContent() {
-    // Defer loading by a short period, so as not to stack up page reloads if user resizes the window very quickly.
+    $.pjax({
+      url: window.location.pathname,
+      data: querySpec( window.location.search ),
+      container: target,
+      push: false
+    });
+  }
+
+  // Defer loading into a single timeout, so as not to stack up reloads.
+  function deferReloadContent() {
     if ( ! nowLoading ) {
       nowLoading = setTimeout( function(){ 
+        reloadContent();
         nowLoading = undefined; 
-        $.ajax({
-          url: window.location.pathname,
-          dataType: 'html',
-          data: querySpec( window.location.search ),
-          success: function(data){
-            $(target).html(data);
-            next();
-            conlog( 'Ajax initial load : min-width ' + widthCurrent + ' : ' + document.title );
-          }
-        });
       }, 250 );
     }
   }
@@ -78,25 +75,23 @@ $.fn.responsiveContent = function( useropts ){
   widthCurrent = getMinWidth();
 
   // If we're greater than or equal to the first significant breakpoint, reload (larger) content
-  if ( widthCurrent >= opts.widths[1] || opts.forceLoad ) {
+  if ( widthCurrent > opts.widths[0] || opts.forceLoad ) {
     reloadContent();
   }
 
   // Detech a significant width change, and reload content.
   $(window).resize(function() {
-    var needsReload = false;
     var widthNew = getMinWidth();
     for( var i=0; i<opts.widths.length; i++ ) {
       if ( ( widthCurrent < opts.widths[i] && widthNew >= opts.widths[i] ) || ( widthCurrent > opts.widths[i] && widthNew <= opts.widths[i] )) { 
         widthCurrent = opts.widths[i];
-        reloadContent();
+        deferReloadContent();
       }
     }
   });
 
-  // Bind pjax reloads to anchor tags, if history.pushState is supported
+  // Pjax-ify links.  
   if ( $.support.pjax ) {
-    // Pjax-ify links. Omit those that start with a "javascript:" href directive, such as href="javascript:void(0)" 
     $('a').live('click', function(event){
       event.preventDefault();
       $.pjax({
@@ -105,31 +100,32 @@ $.fn.responsiveContent = function( useropts ){
         data: querySpec( $(this).attr('href') )
       });
     })
-
-    // Disable pjax timeout. See issue: https://github.com/defunkt/jquery-pjax/issues/129
-    $.pjax.defaults.timeout = false;
-    
-    // Fire post load actions
-    $(target).on('pjax:end', function(){
-      next();
-      conlog( 'Ajax and pushSate : min-width ' + widthCurrent + ' : ' + document.title );
-    });
   }
 
-  // Run the after-load callback, on a zero timeout.
-  function next() {
+  // Fire post load actions
+  $(target).on('pjax:success', function(){
     setTimeout( function(){
       opts.afterLoad();
     });
-  }
+    conlog( 'Ajax load. width:' + $(window).width() + ' step:' + widthCurrent );
+    ; 
+  });
 
   function conlog(message) {
-    if (DEBUG && console) {
+    if (opts.debug) {
       console.log(message);
     }
   }
 
 }
+
+
+// Is pjax supported by this browser?
+$.support.pjax =
+  window.history && window.history.pushState && window.history.replaceState
+  // pushState isn't reliable on iOS until 5.
+  && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)
+
 
 // When called on a link, fetches the href with ajax into the
 // container specified as the first parameter or with the data-pjax
@@ -176,38 +172,40 @@ $.fn.pjax = function( container, options ) {
 //
 // Returns false if pjax runs, otherwise nothing.
 function handleClick(event, container, options) {
-  options = optionsFor(container, options)
+  if ( $.support.pjax ) {
+    options = optionsFor(container, options)
 
-  var link = event.currentTarget
+    var link = event.currentTarget
 
-  if (link.tagName.toUpperCase() !== 'A')
-    throw "$.fn.pjax or $.pjax.click requires an anchor element"
+    if (link.tagName.toUpperCase() !== 'A')
+      throw "$.fn.pjax or $.pjax.click requires an anchor element"
 
-  // Middle click, cmd click, and ctrl click should open
-  // links in a new tab as normal.
-  if ( event.which > 1 || event.metaKey || event.ctrlKey )
-    return
+    // Middle click, cmd click, and ctrl click should open
+    // links in a new tab as normal.
+    if ( event.which > 1 || event.metaKey || event.ctrlKey )
+      return
 
-  // Ignore cross origin links
-  if ( location.protocol !== link.protocol || location.host !== link.host )
-    return
+    // Ignore cross origin links
+    if ( location.protocol !== link.protocol || location.host !== link.host )
+      return
 
-  // Ignore anchors on the same page
-  if ( link.hash && link.href.replace(link.hash, '') ===
-       location.href.replace(location.hash, '') )
-    return
+    // Ignore anchors on the same page
+    if ( link.hash && link.href.replace(link.hash, '') ===
+         location.href.replace(location.hash, '') )
+      return
 
-  var defaults = {
-    url: link.href,
-    container: $(link).attr('data-pjax'),
-    target: link,
-    clickedElement: $(link), // DEPRECATED: use target
-    fragment: null
+    var defaults = {
+      url: link.href,
+      container: $(link).attr('data-pjax'),
+      target: link,
+      clickedElement: $(link), // DEPRECATED: use target
+      fragment: null
+    }
+
+    $.pjax($.extend({}, defaults, options))
+
+    event.preventDefault()
   }
-
-  $.pjax($.extend({}, defaults, options))
-
-  event.preventDefault()
 }
 
 
@@ -231,184 +229,227 @@ function handleClick(event, container, options) {
 //
 // Returns whatever $.ajax returns.
 var pjax = $.pjax = function( options ) {
-  options = $.extend(true, {}, $.ajaxSettings, pjax.defaults, options)
 
-  if ($.isFunction(options.url)) {
-    options.url = options.url()
-  }
+  if ( $.support.pjax || !options.push ) {
+    options = $.extend(true, {}, $.ajaxSettings, pjax.defaults, options)
 
-  var target = options.target
-
-  // DEPRECATED: use options.target
-  if (!target && options.clickedElement) target = options.clickedElement[0]
-
-  var hash = parseURL(options.url).hash
-
-  // DEPRECATED: Save references to original event callbacks. However,
-  // listening for custom pjax:* events is prefered.
-  var oldBeforeSend = options.beforeSend,
-      oldComplete   = options.complete,
-      oldSuccess    = options.success,
-      oldError      = options.error
-
-  var context = options.context = findContainerFor(options.container)
-
-  // We want the browser to maintain two separate internal caches: one
-  // for pjax'd partial page loads and one for normal page loads.
-  // Without adding this secret parameter, some browsers will often
-  // confuse the two.
-  if (!options.data) options.data = {}
-  options.data._pjax = context.selector
-
-  function fire(type, args) {
-    var event = $.Event(type, { relatedTarget: target })
-    context.trigger(event, args)
-    return !event.isDefaultPrevented()
-  }
-
-  var timeoutTimer
-
-  options.beforeSend = function(xhr, settings) {
-    if (settings.timeout > 0) {
-      timeoutTimer = setTimeout(function() {
-        if (fire('pjax:timeout', [xhr, options]))
-          xhr.abort('timeout')
-      }, settings.timeout)
-
-      // Clear timeout setting so jquerys internal timeout isn't invoked
-      settings.timeout = 0
+    if ($.isFunction(options.url)) {
+      options.url = options.url()
     }
 
-    xhr.setRequestHeader('X-PJAX', 'true')
-    xhr.setRequestHeader('X-PJAX-Container', context.selector)
+    var target = options.target
 
-    var result
+    // DEPRECATED: use options.target
+    if (!target && options.clickedElement) target = options.clickedElement[0]
 
-    // DEPRECATED: Invoke original `beforeSend` handler
-    if (oldBeforeSend) {
-      result = oldBeforeSend.apply(this, arguments)
-      if (result === false) return false
+    var hash = parseURL(options.url).hash
+
+    // DEPRECATED: Save references to original event callbacks. However,
+    // listening for custom pjax:* events is prefered.
+    var oldBeforeSend = options.beforeSend,
+        oldComplete   = options.complete,
+        oldSuccess    = options.success,
+        oldError      = options.error
+
+    var context = options.context = findContainerFor(options.container)
+
+    // We want the browser to maintain two separate internal caches: one
+    // for pjax'd partial page loads and one for normal page loads.
+    // Without adding this secret parameter, some browsers will often
+    // confuse the two.
+    if (!options.data) options.data = {}
+    options.data._pjax = context.selector
+
+    function fire(type, args) {
+      var event = $.Event(type, { relatedTarget: target })
+      context.trigger(event, args)
+      return !event.isDefaultPrevented()
     }
 
-    if (!fire('pjax:beforeSend', [xhr, settings]))
-      return false
-  }
+    var timeoutTimer
 
-  options.complete = function(xhr, textStatus) {
-    if (timeoutTimer)
-      clearTimeout(timeoutTimer)
+    options.beforeSend = function(xhr, settings) {
+      if (settings.timeout > 0) {
+        timeoutTimer = setTimeout(function() {
+          if (fire('pjax:timeout', [xhr, options]))
+            xhr.abort('timeout')
+        }, settings.timeout)
 
-    // DEPRECATED: Invoke original `complete` handler
-    if (oldComplete) oldComplete.apply(this, arguments)
+        // Clear timeout setting so jquerys internal timeout isn't invoked
+        settings.timeout = 0
+      }
 
-    fire('pjax:complete', [xhr, textStatus, options])
+      xhr.setRequestHeader('X-PJAX', 'true')
+      xhr.setRequestHeader('X-PJAX-Container', context.selector)
 
-    fire('pjax:end', [xhr, options])
-    // end.pjax is deprecated
-    fire('end.pjax', [xhr, options])
-  }
+      var result
 
-  options.error = function(xhr, textStatus, errorThrown) {
-    var container = extractContainer("", xhr, options)
+      // DEPRECATED: Invoke original `beforeSend` handler
+      if (oldBeforeSend) {
+        result = oldBeforeSend.apply(this, arguments)
+        if (result === false) return false
+      }
 
-    // DEPRECATED: Invoke original `error` handler
-    if (oldError) oldError.apply(this, arguments)
-
-    var allowed = fire('pjax:error', [xhr, textStatus, errorThrown, options])
-    if (textStatus !== 'abort' && allowed)
-      window.location = container.url
-  }
-
-  options.success = function(data, status, xhr) {
-    var container = extractContainer(data, xhr, options)
-
-    if (!container.contents) {
-      window.location = container.url
-      return
+      if (!fire('pjax:beforeSend', [xhr, settings]))
+        return false
     }
 
-    pjax.state = {
-      id: options.id || uniqueId(),
-      url: container.url,
-      title: container.title,
-      container: context.selector,
-      fragment: options.fragment,
-      timeout: options.timeout
+    options.complete = function(xhr, textStatus) {
+      if (timeoutTimer)
+        clearTimeout(timeoutTimer)
+
+      // DEPRECATED: Invoke original `complete` handler
+      if (oldComplete) oldComplete.apply(this, arguments)
+
+      fire('pjax:complete', [xhr, textStatus, options])
+
+      fire('pjax:end', [xhr, options])
+      // end.pjax is deprecated
+      fire('end.pjax', [xhr, options])
     }
 
-    if (options.push || options.replace) {
-      window.history.replaceState(pjax.state, container.title, container.url)
+    options.error = function(xhr, textStatus, errorThrown) {
+      var container = extractContainer("", xhr, options)
+
+      // DEPRECATED: Invoke original `error` handler
+      if (oldError) oldError.apply(this, arguments)
+
+      var allowed = fire('pjax:error', [xhr, textStatus, errorThrown, options])
+      if (textStatus !== 'abort' && allowed)
+        window.location = container.url
     }
 
-    if (container.title) document.title = container.title
-    context.html(container.contents)
+    options.success = function(data, status, xhr) {
+      var container = extractContainer(data, xhr, options)
 
-    // Scroll to top by default
-    if (typeof options.scrollTo === 'number')
-      $(window).scrollTop(options.scrollTo)
+      if (!container.contents) {
+        window.location = container.url
+        return
+      }
 
-    // Google Analytics support
-    if ( (options.replace || options.push) && window._gaq )
-      _gaq.push(['_trackPageview'])
+      pjax.state = {
+        id: options.id || uniqueId(),
+        url: container.url,
+        title: container.title,
+        container: context.selector,
+        fragment: options.fragment,
+        timeout: options.timeout
+      }
 
-    // If the URL has a hash in it, make sure the browser
-    // knows to navigate to the hash.
-    if ( hash !== '' ) {
-      window.location.href = hash
+      if (options.push || options.replace) {
+        window.history.replaceState(pjax.state, container.title, container.url)
+      }
+
+      if (container.title) document.title = container.title
+      context.html(container.contents)
+
+      // Scroll to top by default
+      if (typeof options.scrollTo === 'number')
+        $(window).scrollTop(options.scrollTo)
+
+      // Google Analytics support
+      if ( (options.replace || options.push) && window._gaq )
+        _gaq.push(['_trackPageview'])
+
+      // If the URL has a hash in it, make sure the browser
+      // knows to navigate to the hash.
+      if ( hash !== '' ) {
+        window.location.href = hash
+      }
+
+      // DEPRECATED: Invoke original `success` handler
+      if (oldSuccess) oldSuccess.apply(this, arguments)
+
+      fire('pjax:success', [data, status, xhr, options])
     }
 
-    // DEPRECATED: Invoke original `success` handler
-    if (oldSuccess) oldSuccess.apply(this, arguments)
 
-    fire('pjax:success', [data, status, xhr, options])
+    // Initialize pjax.state for the initial page load. Assume we're
+    // using the container and options of the link we're loading for the
+    // back button to the initial page. This ensures good back button
+    // behavior.
+    if (!pjax.state && $.support.pjax ) {
+      pjax.state = {
+        id: uniqueId(),
+        url: window.location.href,
+        title: document.title,
+        container: context.selector,
+        fragment: options.fragment,
+        timeout: options.timeout
+      }
+      window.history.replaceState(pjax.state, document.title)
+    }
+
+    // Cancel the current request if we're already pjaxing
+    var xhr = pjax.xhr
+    if ( xhr && xhr.readyState < 4) {
+      xhr.onreadystatechange = $.noop
+      xhr.abort()
+    }
+
+    pjax.options = options
+    var xhr = pjax.xhr = $.ajax(options)
+
+    if (xhr.readyState > 0) {
+      // pjax event is deprecated
+      $(document).trigger('pjax', [xhr, options])
+
+      if (options.push && !options.replace && $.support.pjax ) {
+        // Cache current container element before replacing it
+        containerCache.push(pjax.state.id, context.clone(true, true).contents())
+
+        window.history.pushState(null, "", options.url)
+      }
+
+      fire('pjax:start', [xhr, options])
+      // start.pjax is deprecated
+      fire('start.pjax', [xhr, options])
+
+      fire('pjax:send', [xhr, options])
+    }
+
+    return pjax.xhr
   }
 
+  // Fall back to normalcy for older browsers.
+  else {
+    var url = $.isFunction(options.url) ? options.url() : options.url,
+        method = options.type ? options.type.toUpperCase() : 'GET'
 
-  // Initialize pjax.state for the initial page load. Assume we're
-  // using the container and options of the link we're loading for the
-  // back button to the initial page. This ensures good back button
-  // behavior.
-  if (!pjax.state) {
-    pjax.state = {
-      id: uniqueId(),
-      url: window.location.href,
-      title: document.title,
-      container: context.selector,
-      fragment: options.fragment,
-      timeout: options.timeout
-    }
-    window.history.replaceState(pjax.state, document.title)
-  }
+    var form = $('<form>', {
+      method: method === 'GET' ? 'GET' : 'POST',
+      action: url,
+      style: 'display:none'
+    })
 
-  // Cancel the current request if we're already pjaxing
-  var xhr = pjax.xhr
-  if ( xhr && xhr.readyState < 4) {
-    xhr.onreadystatechange = $.noop
-    xhr.abort()
-  }
-
-  pjax.options = options
-  var xhr = pjax.xhr = $.ajax(options)
-
-  if (xhr.readyState > 0) {
-    // pjax event is deprecated
-    $(document).trigger('pjax', [xhr, options])
-
-    if (options.push && !options.replace) {
-      // Cache current container element before replacing it
-      containerCache.push(pjax.state.id, context.clone(true, true).contents())
-
-      window.history.pushState(null, "", options.url)
+    if (method !== 'GET' && method !== 'POST') {
+      form.append($('<input>', {
+        type: 'hidden',
+        name: '_method',
+        value: method.toLowerCase()
+      }))
     }
 
-    fire('pjax:start', [xhr, options])
-    // start.pjax is deprecated
-    fire('start.pjax', [xhr, options])
+    var data = options.data
+    if (typeof data === 'string') {
+      $.each(data.split('&'), function(index, value) {
+        var pair = value.split('=')
+        form.append($('<input>', {type: 'hidden', name: pair[0], value: pair[1]}))
+      })
+    } else if (typeof data === 'object') {
+      for (key in data)
+        form.append($('<input>', {type: 'hidden', name: key, value: data[key]}))
+    }
 
-    fire('pjax:send', [xhr, options])
+    $(document.body).append(form)
+    form.submit()
+
+    // TODO: These functions also need these "no-support" behaviours added into them
+    //$.pjax.click = $.noop // DONE
+    //$.pjax.reload = window.location.reload // DONE
+    //$.fn.pjax = function() { return this } // NO CHANGE REQUIRED
   }
 
-  return pjax.xhr
 }
 
 
@@ -589,19 +630,23 @@ function extractContainer(data, xhr, options) {
 //
 // Returns whatever $.pjax returns.
 pjax.reload = function(container, options) {
-  var defaults = {
-    url: window.location.href,
-    push: false,
-    replace: true,
-    scrollTo: false
+  if ( $.support.pjax || !options.push ) {
+    var defaults = {
+      url: window.location.href,
+      push: false,
+      replace: true,
+      scrollTo: false
+    }
+    return $.pjax($.extend(defaults, optionsFor(container, options)))
   }
-
-  return $.pjax($.extend(defaults, optionsFor(container, options)))
+  else {
+    window.location.reload
+  }
 }
 
-
 pjax.defaults = {
-  timeout: 650,
+  //timeout: 650,
+  timeout: 999999,
   push: true,
   replace: false,
   type: 'GET',
@@ -764,50 +809,5 @@ $(window).bind('popstate', function(event){
 if ( $.inArray('state', $.event.props) < 0 )
   $.event.props.push('state')
 
-
-// Is pjax supported by this browser?
-$.support.pjax =
-  window.history && window.history.pushState && window.history.replaceState
-  // pushState isn't reliable on iOS until 5.
-  && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)
-
-// Fall back to normalcy for older browsers.
-if ( !$.support.pjax ) {
-  $.pjax = function( options ) {
-    var url = $.isFunction(options.url) ? options.url() : options.url,
-        method = options.type ? options.type.toUpperCase() : 'GET'
-
-    var form = $('<form>', {
-      method: method === 'GET' ? 'GET' : 'POST',
-      action: url,
-      style: 'display:none'
-    })
-
-    if (method !== 'GET' && method !== 'POST') {
-      form.append($('<input>', {
-        type: 'hidden',
-        name: '_method',
-        value: method.toLowerCase()
-      }))
-    }
-
-    var data = options.data
-    if (typeof data === 'string') {
-      $.each(data.split('&'), function(index, value) {
-        var pair = value.split('=')
-        form.append($('<input>', {type: 'hidden', name: pair[0], value: pair[1]}))
-      })
-    } else if (typeof data === 'object') {
-      for (key in data)
-        form.append($('<input>', {type: 'hidden', name: key, value: data[key]}))
-    }
-
-    $(document.body).append(form)
-    form.submit()
-  }
-  $.pjax.click = $.noop
-  $.pjax.reload = window.location.reload
-  $.fn.pjax = function() { return this }
-}
 
 })(jQuery);
