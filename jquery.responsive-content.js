@@ -9,18 +9,9 @@
 
 (function($){
 
-// Is pjax supported by this browser?
-$.support.pjax =
-	window.history && window.history.pushState && window.history.replaceState
-	// pushState isn't reliable on iOS until 5.
-	&& !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)
-
 $.fn.responsiveContent = function( useropts ){ 
 
-	var 
-		target = this, 
-		widthCurrent, 
-		nowLoading;
+	var target = this, widthCurrent, nowLoading;
 
 	if ( this.length === 0 )
 		return;
@@ -30,11 +21,19 @@ $.fn.responsiveContent = function( useropts ){
 			widths: [ 0, 481, 768, 1024 ],        // Screen width break-points.
 			afterLoad: function(){ return this }, // Callback after each content load
 			forceLoad: false,                     // Force an initial load. Normally only does this when getMinWidth > widths[0]
-			selector: 'a',                        // The selector for which anchors to pjaxify. Must only select html A tags.
-			debug: false
+			linkSelector: 'a'                     // The selector for which anchors to pjaxify. Must only select html A tags.
 		}, 
 		useropts 
 	);
+
+	// Add ajax, screen-width, and other device info to querystr params
+	function resconParams() {
+		return {
+			_rescon_width: widthCurrent,
+			_rescon_touch: 'ontouchstart' in document.documentElement,
+			_rescon_retina: window.devicePixelRatio && window.devicePixelRatio > 1
+		} 
+	}
 
 	// The lower bound of the width-range that we're in.
 	function getMinWidth() {
@@ -49,23 +48,11 @@ $.fn.responsiveContent = function( useropts ){
 		return width;
 	}
 
-	// Add ajax, screen-width, and other device info to querystr params
-	function querySpec( qstr ) {
-		var params = {};
-		params._rescon_width = widthCurrent;
-		params._rescon_touch = 'ontouchstart' in document.documentElement;
-		// Parse out params from current querystr and add them
-		qstr.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-			params[key] = value;
-		});
-		return params; 
-	}
-
 	// Initial content reloader
 	function reloadContent() {
 		$.pjax({
-			url: window.location.pathname,
-			data: querySpec( window.location.search ),
+			url: window.location.pathname + window.location.search,
+			data: resconParams(),
 			container: target,
 			url404: opts.url404,
 			push: false,
@@ -104,31 +91,28 @@ $.fn.responsiveContent = function( useropts ){
 
 	// Pjax-ify links.	
 	if ( $.support.pjax ) {
-		$(opts.selector).live('click', function(event){
-			event.preventDefault();
-			$.pjax({
-				url: $(this).attr('href'),
-				container: target,
-				data: querySpec( $(this).attr('href') ),
+		$(opts.linkSelector).pjax( 
+			$(target).selector, 
+			{
+				data: resconParams(),
 				url404: opts.url404
-			});
-		})
+			}
+		)
 	}
 
 	// Fire post load actions
 	$(target).on('pjax:success', function(){
-		conlog( 'Ajax load: ' + window.location.pathname + ' width:' + $(window).width() + ' step:' + widthCurrent );
 		opts.afterLoad();
 	});
 
-	function conlog(message) {
-		if (opts.debug) {
-			console.log(message);
-		}
-	}
+} // close: $.fn.responsiveContent
 
-}
 
+// Is pjax supported by this browser?
+$.support.pjax =
+	window.history && window.history.pushState && window.history.replaceState
+	// pushState isn't reliable on iOS until 5.
+	&& !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)
 
 // When called on a link, fetches the href with ajax into the
 // container specified as the first parameter or with the data-pjax
