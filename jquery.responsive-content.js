@@ -11,10 +11,15 @@
 
 $.fn.responsiveContent = function( useropts ){ 
 
-	var target = this, widthCurrent, nowLoading;
-
 	if ( this.length === 0 )
 		return;
+
+	var 
+		hasTouch = 'ontouchstart' in document.documentElement,
+		hasRetina = window.devicePixelRatio && window.devicePixelRatio > 1,
+		widthCurrent, 
+		nowLoading,
+		target = this; 
 
 	var opts = $.extend(
 		{
@@ -30,8 +35,8 @@ $.fn.responsiveContent = function( useropts ){
 	function resconParams() {
 		return {
 			_rescon_width: widthCurrent,
-			_rescon_touch: 'ontouchstart' in document.documentElement,
-			_rescon_retina: window.devicePixelRatio && window.devicePixelRatio > 1
+			_rescon_touch: hasTouch,
+			_rescon_retina: hasRetina
 		} 
 	}
 
