@@ -25,16 +25,24 @@ $('#contentContainer').responsiveContent({
   widths: [ 0, 640 ]       // Optional. Width breakpoints. Default is [ 0, 481, 768, 1024 ].
 })
 ```
-### Default Content
+### Content
 
-Include default content in your content-container element. This basically means the "smallest" version of you content,
-i.e. suitable for smartphones. If the device screen width exceeds the 
-first (non zero) breakpoint in your set of defined breakpoints, the ajax call will be made 
-and the default content will be replaced by the ajax response. 
+You'll probably want to include default content in your content-container element. This basically means the 
+"smallest" version of you content, i.e. suitable for smartphones. When the device screen width exceeds the 
+first (non zero) breakpoint in your set of defined breakpoints, an ajax call will be made 
+and the default content will be replaced by the ajax response's HTML fragment. Alternatively, if you don't 
+include such default content, you can use the `forceLoad: true` option to force an initial ajax load.
+
+Subsequent clicks on links will cause new content (device tailored) to be loaded into the page using
+[Pjax](https://github.com/defunkt/jquery-pjax). 
+
+NOTE: the latter step is only true for browsers that support `history.pushState`. IE9 does not, so will
+load default content first following each click - followed by device-specific content if the width exceeds the 
+first (non zero) breakpoint.
 
 ### Screen Resizing
 
-Ajax calls will be made if you resize the screen past the defined breakpoints. This is mosttly useful in 
+Ajax calls will be made if you resize the screen past the defined breakpoints. This is mostly useful in 
 development, to show the impact of screen size on content. 
 
 ### Example Sites
