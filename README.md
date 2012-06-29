@@ -13,7 +13,7 @@ _rescon_touch  // The device has touch/swipe capability. true|false
 _rescon_retina // The device has a retina screen. true|false
 ```
 
-## Usage
+### Usage
 
 Call it on a jQuery selector wrapper that returns a single content-container element: 
 
@@ -25,23 +25,22 @@ $('#contentContainer').responsiveContent({
   widths: [ 0, 640 ]       // Optional. Width breakpoints. Default is [ 0, 481, 768, 1024 ].
 })
 ```
-## Default Content
+### Default Content
 
 Include default content in your content-container element. This basically means the "smallest" version of you content,
 i.e. suitable for smartphones. If the device screen width exceeds the 
 first (non zero) breakpoint in your set of defined breakpoints, the ajax call will be made 
 and the default content will be replaced by the ajax response. 
 
-## Screen Resizing
+### Screen Resizing
 
 Ajax calls will be made if you resize the screen past the defined breakpoints. This is mosttly useful in 
 development, to show the impact of screen size on content. 
 
-## Example Sites
+### Example Sites
 
 A site with (subtly) responsive content: http://thechapmagazine.co.uk/
 
-## Credits
-
+***
 Responsive content is by [Stephan Fowler](http://uk.linkedin.com/in/stephanfowler), and is a fork of 
 the wonderful [Pjax](https://github.com/defunkt/jquery-pjax).
