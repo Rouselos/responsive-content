@@ -5,15 +5,7 @@ The page content is an HTML fragment pulled in via ajax, and inserted into a spe
 Each ajax request carries device-dependent query parameters which you can use (server side) to tailor 
 the content returned in the fragment.
 
-The device-dependent query parameters are:
-```
-_rescon        // Indicates that a HTML fragment should be served, i.e. omitting surrounding HTML furniture. 
-_rescon_width  // The lower bound of the current screen-width range from a set of ranges. Integer. 
-_rescon_touch  // The device has touch/swipe capability. true|false
-_rescon_retina // The device has a retina screen. true|false
-```
-
-### Usage
+### Client Side
 
 Call it on a jQuery selector wrapper that returns a single content-container element: 
 
@@ -25,6 +17,20 @@ $('#contentContainer').responsiveContent({
   widths: [ 0, 640 ]       // Optional. Width breakpoints. Default is [ 0, 481, 768, 1024 ].
 })
 ```
+
+### Server Side
+
+The device-dependent query parameters in the ajax request are:
+```
+_rescon        // Indicates that a HTML fragment should be served.
+_rescon_width  // The lower bound of the current screen-width range from a set of ranges. Integer. 
+_rescon_touch  // The device has touch/swipe capability. true|false
+_rescon_retina // The device has a retina screen. true|false
+```
+Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
+You probably want to first check that `_rescon` is present, an if so render only a fragment, 
+omitting all surrounding HTML furniture. 
+
 ### Content
 
 You'll probably want to include default content in your content-container element. This basically means the 
