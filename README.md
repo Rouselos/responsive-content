@@ -2,4 +2,4 @@
 
 Documentation to follow soon. 
 
-In the meantime, here's a site with responsive content: http://thechap.net/
+In the meantime here's a site with (subtly) responsive content: http://thechapmagazine.co.uk/
