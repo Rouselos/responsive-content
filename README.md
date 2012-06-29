@@ -28,7 +28,7 @@ $('#contentContainer').responsiveContent({
 ### Content
 
 You'll probably want to include default content in your content-container element. This basically means the 
-"smallest" version of you content, i.e. suitable for smartphones. When the device screen width exceeds the 
+"smallest" version of you content, i.e. suitable for smartphones. When the window width exceeds the 
 first (non zero) breakpoint in your set of defined breakpoints, an ajax call will be made 
 and the default content will be replaced by the ajax response's HTML fragment. Alternatively, if you don't 
 include such default content, you can use the `forceLoad: true` option to force an initial ajax load.
@@ -40,14 +40,16 @@ NOTE: the latter step is only true for browsers that support `history.pushState`
 load default content first following each click - followed by device-specific content if the width exceeds the 
 first (non zero) breakpoint.
 
-### Screen Resizing
+### Window Resizing
 
-Ajax calls will be made if you resize the screen past the defined breakpoints. This is mostly useful in 
-development, to show the impact of screen size on content. 
+Ajax calls will be made if you resize the window past the defined breakpoints. This is mostly useful in 
+development, to emulate the effect of various screen sizes on the content that is loaded. 
 
 ### Example Sites
 
-A site with (subtly) responsive content: http://thechapmagazine.co.uk/
+[The Chap Magazine](http://thechapmagazine.co.uk/) has subtly responsive content using this technique. The 
+number of articles on the front page decreases as you reduce window size, as does the the size of 
+images in articles.
 
 ***
 Responsive content is by [Stephan Fowler](http://uk.linkedin.com/in/stephanfowler), and is a fork of 
