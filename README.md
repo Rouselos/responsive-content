@@ -1,12 +1,13 @@
 # Responsive Content
 
 Responsive Content is a jQuery plugin to help you serve differing content based on device screen-size and capability. 
-The page content is an HTML fragment pulled in via Ajax, and inserted into a specified container element. 
-Each ajax request carries device-dependent query parameters which you can use (server side) to tailor 
-the content returned in the fragment.
+It can be used to in parallel with CSS "responsive design", but is fundamentally different in that is loads different 
+_content_ for different screen szes, rather than merely hiding/showing elements of the same content. It does not use 
+User Agent detection, and relies only on window/screen width and secondary device capabilities.
 
-This can be used to in parallel with CSS "responsive design", but is fundamentally different in that is loads _different_ 
-content for different screen szes, rather than merely hiding/showing elements of the same content.
+Page content is loaded as an HTML fragment by Ajax and inserted into a specified container element. 
+Each ajax request has device-dependent query parameters which you can use (server side) to tailor 
+the content returned in the fragment.
 
 ### Client Side
 
@@ -32,22 +33,29 @@ _rescon_retina // The device has a retina screen. true|false
 ```
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 You probably want to first check that `_rescon` is present, an if so render only a fragment, 
-omitting all surrounding HTML furniture. 
+omitting all surrounding HTML, and especially omitting the above jQuary function call. This is imortanrt 
+in order to prevent perpetual request loops.
 
 ### Content
 
-You'll probably want to include default content in your content-container element. This basically means the 
-"smallest" version of you content, i.e. suitable for smartphones. If the window width exceeds the 
+If the window width exceeds the 
 first (non zero) breakpoint in your set of defined breakpoints, an Ajax call will be made 
-and the default content will be replaced by the Ajax response. Alternatively, if you don't 
-include such default content, you can use the `forceLoad: true` option to force an initial Ajax load.
+and its response will replace the "default content" in the container element. 
 
-Subsequent clicks on links will cause new content (device tailored) to be loaded into the page using
-[Pjax](https://github.com/defunkt/jquery-pjax). 
+Default content is the "smallest" version of yout content, i.e. as suitable for smartphones. Alternatively, 
+if you don't include such default content, you can use the `forceLoad: true` option to force an initial Ajax load.
 
-NOTE: the latter step is only true for browsers that support `history.pushState`. IE9 does not, so will
-load default content first following each click - followed by device-specific content if the width exceeds the 
+Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
+container element using [Pjax](https://github.com/defunkt/jquery-pjax). 
+
+NOTE: the latter is only true for browsers that support `history.pushState`. IE9 does not, so will
+load default content first following each click - followed by device-specific content if the window width exceeds the 
 first (non zero) breakpoint.
+
+### Cache Considerations
+
+The approach is cache-friendly, as URLS for pages and their Ajax'd fragments (with query parts) are  
+deterministic and not dependent on User Agent or cookies - and thus effective as regular cache keys. 
 
 ### Window Resizing
 
