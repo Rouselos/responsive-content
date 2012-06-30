@@ -5,6 +5,9 @@ The page content is an HTML fragment pulled in via Ajax, and inserted into a spe
 Each ajax request carries device-dependent query parameters which you can use (server side) to tailor 
 the content returned in the fragment.
 
+This can be used to in parallel with CSS "responsive design", but is fundamentally different in that is loads _different_ 
+content for different screen szes, rather than merely hiding/showing elements of the same content.
+
 ### Client Side
 
 Call it on a jQuery selector wrapper that returns a single content-container element: 
