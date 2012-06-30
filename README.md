@@ -2,14 +2,16 @@
 
 Responsive Content is a jQuery plugin that helps you serve different content to different devices. 
 
-Whilst it can and should be used in parallel with CSS Responsive Design, it is fundamentally different in that 
-it loads different _content_ for different screen szes, rather than applying different _styling_ 
-to the same content. It doesn't use User Agent detection, relying only on window/screen width 
-and secondary device capabilities.
+Whilst it can be used in parallel with CSS Responsive Design, it does something else completely. 
+For a given screen size Responsive Design applies different styling to _identical_ content, whereas
+Reponsive Content will actually load _different_ content. It can be used subtly - for instance to load 
+smaller images on smaller devices - or to deliver radically different markup to distinct ranges of window width.  
 
-HTML page content is loaded as a single fragment by Ajax and inserted into a container element. 
-Each Ajax fragment request carries device-dependent query values which can be used (server side) to tailor 
-the HTML of the returned fragment.
+Reponsive Content doesn't use User Agent detection, relying only on window/screen width 
+and secondary device capabilities. HTML page content is loaded as a single fragment by Ajax
+and inserted into a container element. Each Ajax fragment request carries device-dependent 
+query values which can be referred to on the server side to tailor the returned HTML fragment 
+to the current device.
 
 ### Client Side
 
@@ -35,7 +37,7 @@ _rescon_retina // The device has a retina screen. true|false
 ```
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 
-If the `_rescon` query parameter is present in a request, render only a fragment that
+If the `_rescon` query parameter is present in a request, render a fragment that
 omits all surrounding HTML - and especially the '$('#contentContainer').responsiveContent()' function call. 
 This is important in order to prevent perpetual request loops.
 
@@ -54,10 +56,10 @@ if you don't include such default content, you can use the `forceLoad: true` opt
 Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
 container element using [Pjax](https://github.com/defunkt/jquery-pjax). This causes the address bar and
 history state to be updated with the link's href URL, ensuring correct back/forward button behaviour. Pjax also 
-caches DOM fragments, so that post-Ajax page state is maintained when navigating the history. 
+caches DOM fragments so that post-Ajax page state is maintained when navigating the history. 
 
 NOTE: the latter paragraph only applies to browsers that support `history.pushState`. IE9 does not, for example. 
-In this case the fallback behaviour is to always load the entire page as normal including default content, 
+In this case the fallback behaviour is to always load the entire page as normal including its default content, 
 followed by device-tailored content via Ajax if the window width exceeds the first (non zero) breakpoint.
 
 ### Cache Considerations
