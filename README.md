@@ -1,9 +1,9 @@
 # Responsive Content
 
 Responsive Content is a jQuery plugin to help you serve differing content to different devices. 
-It can be used in parallel with CSS "responsive design" but is fundamentally different in that is loads different 
-_content_ for different screen szes, rather than merely hiding/showing elements of the same content. It does not use 
-User Agent detection, relying simply on window/screen width and secondary device capabilities.
+It can be used in parallel with CSS "responsive design" but is fundamentally different in that it loads different 
+_content_ for different screen szes, rather than applying different _styling_ to the same content. It does not use 
+User Agent detection, relying only on window/screen width and secondary device capabilities.
 
 Page content is loaded as HTML fragments by Ajax and inserted inta  besingle dspecified container element. 
 Each ajax request has device-dependent query parameters which can be used (server side) to tailor 
