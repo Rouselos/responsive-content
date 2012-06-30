@@ -5,8 +5,8 @@ It can be used in parallel with CSS "responsive design" but is fundamentally dif
 _content_ for different screen szes, rather than applying different _styling_ to the same content. It does not use 
 User Agent detection, relying only on window/screen width and secondary device capabilities.
 
-Page content is loaded as HTML fragments by Ajax and inserted inta  besingle dspecified container element. 
-Each ajax request has device-dependent query parameters which can be used (server side) to tailor 
+HTML page content is loaded as a fragment by Ajax and inserted into a container element. 
+Each ajax request has device-dependent query parameter values which can be used (server side) to tailor 
 the HTML in the returned fragment.
 
 ### Client Side
