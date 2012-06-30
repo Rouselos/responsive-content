@@ -1,13 +1,13 @@
 # Responsive Content
 
-Responsive Content is a jQuery plugin to help you serve differing content based on device screen-size and capability. 
-It can be used to in parallel with CSS "responsive design", but is fundamentally different in that is loads different 
+Responsive Content is a jQuery plugin to help you serve differing content to different devices. 
+It can be used in parallel with CSS "responsive design" but is fundamentally different in that is loads different 
 _content_ for different screen szes, rather than merely hiding/showing elements of the same content. It does not use 
-User Agent detection, and relies only on window/screen width and secondary device capabilities.
+User Agent detection, relying simply on window/screen width and secondary device capabilities.
 
-Page content is loaded as an HTML fragment by Ajax and inserted into a specified container element. 
-Each ajax request has device-dependent query parameters which you can use (server side) to tailor 
-the content returned in the fragment.
+Page content is loaded as HTML fragments by Ajax and inserted inta  besingle dspecified container element. 
+Each ajax request has device-dependent query parameters which can be used (server side) to tailor 
+the HTML in the returned fragment.
 
 ### Client Side
 
@@ -32,11 +32,11 @@ _rescon_touch  // The device has touch/swipe capability. true|false
 _rescon_retina // The device has a retina screen. true|false
 ```
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
-You probably want to first check that `_rescon` is present, an if so render only a fragment, 
-omitting all surrounding HTML, and especially omitting the above jQuary function call. This is imortanrt 
+You probably want to first check that `_rescon` is present, and if so render only a fragment, 
+omitting all surrounding HTML and especially the above jQuery function call. This is imortanrt 
 in order to prevent perpetual request loops.
 
-### Content
+### Content Flow
 
 If the window width exceeds the 
 first (non zero) breakpoint in your set of defined breakpoints, an Ajax call will be made 
@@ -54,13 +54,14 @@ first (non zero) breakpoint.
 
 ### Cache Considerations
 
-The approach is cache-friendly, as URLS for pages and their Ajax'd fragments (with query parts) are  
-deterministic and not dependent on User Agent or cookies - and thus effective as regular cache keys. 
+The approach is cache-friendly. URLS for pages and HTML fragments (with query parts) are deterministic 
+and not dependent on User Agent or cookies, and thus effective as regular cache keys. 
 
 ### Window Resizing
 
-Ajax calls will be made if you resize the window past the defined breakpoints. This is mostly useful in 
-development, to emulate the effect of various screen sizes on the content that is loaded. 
+If you resize the window width across the defined breakpoints, Ajax calls will be made and th econtent will 
+be reloaded. This is mostly useful in development, to quickly check how device width variously affects the content 
+that is loaded. 
 
 ### Example Sites
 
