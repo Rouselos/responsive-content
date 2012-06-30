@@ -52,10 +52,12 @@ Default content is the "smallest" version of your content, i.e. as suitable for 
 if you don't include such default content, you can use the `forceLoad: true` option to force an initial Ajax load.
 
 Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
-container element using [Pjax](https://github.com/defunkt/jquery-pjax). 
+container element using [Pjax](https://github.com/defunkt/jquery-pjax). This causes the address bar and
+history state to be updated with the link's href URL, ensuring correct back/forward button behaviour. Pjax also 
+caches DOM fragments, so that post-Ajax page state is maintained when navigating the history. 
 
-NOTE: the latter is only true for browsers that support `history.pushState`. IE9 does not, for example. 
-In such a case the fallback behaviour is to always load the entire pages as normal including default content, 
+NOTE: the latter only applies to browsers that support `history.pushState`. IE9 does not, for example. 
+In this case the fallback behaviour is to always load the entire page as normal including default content, 
 followed by device-tailored content via Ajax if the window width exceeds the first (non zero) breakpoint.
 
 ### Cache Considerations
