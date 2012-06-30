@@ -33,7 +33,7 @@ _rescon_retina // The device has a retina screen. true|false
 ```
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 You probably want to first check that `_rescon` is present, and if so render only a fragment, 
-omitting all surrounding HTML and especially the above jQuery function call. This is imortanrt 
+omitting all surrounding HTML and especially the above jQuery function call. This is important 
 in order to prevent perpetual request loops.
 
 ### Content Flow
@@ -42,7 +42,7 @@ If the window width exceeds the
 first (non zero) breakpoint in your set of defined breakpoints, an Ajax call will be made 
 and its response will replace the "default content" in the container element. 
 
-Default content is the "smallest" version of yout content, i.e. as suitable for smartphones. Alternatively, 
+Default content is the "smallest" version of your content, i.e. as suitable for smartphones. Alternatively, 
 if you don't include such default content, you can use the `forceLoad: true` option to force an initial Ajax load.
 
 Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
@@ -59,7 +59,7 @@ and not dependent on User Agent or cookies, and thus effective as regular cache 
 
 ### Window Resizing
 
-If you resize the window width across the defined breakpoints, Ajax calls will be made and th econtent will 
+If you resize the window width across the defined breakpoints, Ajax calls will be made and the content will 
 be reloaded. This is mostly useful in development, to quickly check how device width variously affects the content 
 that is loaded. 
 
