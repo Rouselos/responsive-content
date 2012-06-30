@@ -56,7 +56,7 @@ container element using [Pjax](https://github.com/defunkt/jquery-pjax). This cau
 history state to be updated with the link's href URL, ensuring correct back/forward button behaviour. Pjax also 
 caches DOM fragments, so that post-Ajax page state is maintained when navigating the history. 
 
-NOTE: the latter only applies to browsers that support `history.pushState`. IE9 does not, for example. 
+NOTE: the latter paragraph only applies to browsers that support `history.pushState`. IE9 does not, for example. 
 In this case the fallback behaviour is to always load the entire page as normal including default content, 
 followed by device-tailored content via Ajax if the window width exceeds the first (non zero) breakpoint.
 
