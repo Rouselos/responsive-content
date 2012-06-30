@@ -30,10 +30,10 @@ $('#contentContainer').responsiveContent({
 
 The query parameters passed by each Ajax request are:
 ```
-_rescon        // Indicates that a HTML fragment should be served.
-_rescon_width  // The lower breakpoint of the window width, from a set of width breakpoints. Integer. 
-_rescon_touch  // The device has touch/swipe capability. true|false
-_rescon_retina // The device has a retina screen. true|false
+_rescon            // Indicates that a HTML fragment should be served.
+_rescon_width      // The lower breakpoint of the window width, from a set of width breakpoints. Integer. 
+_rescon_touch      // The device has touch/swipe capability. true|false
+_rescon_pixelratio // 1 for normal screen. 2 for some iPads etc. Probably an integer...
 ```
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 
