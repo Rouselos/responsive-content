@@ -16,7 +16,7 @@ $.fn.responsiveContent = function( useropts ){
 
 	var 
 		hasTouch = 'ontouchstart' in document.documentElement,
-		hasRetina = window.devicePixelRatio && window.devicePixelRatio > 1,
+		pixelRatio = ( window.devicePixelRatio && window.devicePixelRatio > 1 ) ? window.devicePixelRatio : 1,
 		widthCurrent, 
 		nowLoading,
 		target = this; 
@@ -36,7 +36,7 @@ $.fn.responsiveContent = function( useropts ){
 		return {
 			_rescon_width: widthCurrent,
 			_rescon_touch: hasTouch,
-			_rescon_retina: hasRetina
+			_rescon_pixelratio: pixelRatio
 		} 
 	}
 
@@ -59,7 +59,6 @@ $.fn.responsiveContent = function( useropts ){
 			url: window.location.pathname + window.location.search,
 			data: resconParams(),
 			container: target,
-			url404: opts.url404,
 			push: false,
 			replace: $.support.pjax 
 		});
@@ -99,8 +98,7 @@ $.fn.responsiveContent = function( useropts ){
 		$(opts.linkSelector).pjax( 
 			$(target).selector, 
 			{
-				data: resconParams(),
-				url404: opts.url404
+				data: resconParams()
 			}
 		)
 	}
@@ -308,10 +306,7 @@ var pjax = $.pjax = function( options ) {
 
 			var allowed = fire('pjax:error', [xhr, textStatus, errorThrown, options])
 			if (textStatus !== 'abort' && allowed) {
-				// 404 bevahiour
-				if (xhr.status === 404 && options.url404) {
-					window.location = options.url404
-				} 
+				// Error behavior..?
 			}
 		}
 
