@@ -29,7 +29,7 @@ $('#contentContainer').responsiveContent({
 The query parameters passed by each Ajax request are:
 ```
 _rescon        // Indicates that a HTML fragment should be served.
-_rescon_width  // The lower bound of the current screen-width range from a set of ranges. Integer. 
+_rescon_width  // The lower breakpoint of the window width, from a set of width breakpoints. Integer. 
 _rescon_touch  // The device has touch/swipe capability. true|false
 _rescon_retina // The device has a retina screen. true|false
 ```
@@ -54,9 +54,9 @@ if you don't include such default content, you can use the `forceLoad: true` opt
 Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
 container element using [Pjax](https://github.com/defunkt/jquery-pjax). 
 
-NOTE: the latter is only true for browsers that support `history.pushState`. IE9 does not, so following each click will
-load the entire pages as normal including default content - followed by device-specific content if the window width exceeds the 
-first (non zero) breakpoint.
+NOTE: the latter is only true for browsers that support `history.pushState`. IE9 does not, for example. 
+In such a case the fallback behaviour is to always load the entire pages as normal including default content, 
+followed by device-tailored content via Ajax if the window width exceeds the first (non zero) breakpoint.
 
 ### Cache Considerations
 
@@ -66,15 +66,15 @@ and independent of User Agent or cookies, and are thus effective as regular cach
 ### Window Resizing
 
 If you resize the window width across the defined breakpoints, Ajax calls will be made and the content will 
-be reloaded. This is useful in development, to quickly check how device width variously affects the content 
+be reloaded. This is useful in development, to check how device width variously affects the content 
 that is loaded. 
 
 ### Example Sites
 
-[The Chap Magazine](http://thechapmagazine.co.uk/) has subtly responsive content using this technique. The 
-number of articles on the front page decreases as you reduce window size, as does the the size of 
-images in articles.
+[The Chap Magazine](http://thechapmagazine.co.uk/) has subtly responsive content; the 
+number of articles on the front page decreases as you shrink the window size, as does the the size of 
+images in articles. The site also uses Responsive Design.
 
 ***
-Responsive content is by [Stephan Fowler](http://uk.linkedin.com/in/stephanfowler), and is a fork of 
+Responsive Content is by [Stephan Fowler](http://uk.linkedin.com/in/stephanfowler), and is a fork of 
 the wonderful [Pjax](https://github.com/defunkt/jquery-pjax).
