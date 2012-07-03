@@ -93,14 +93,19 @@ $.fn.responsiveContent = function( useropts ){
 		}
 	});
 
-	// Pjax-ify links.	
+	// If browser supports it...
 	if ( $.support.pjax ) {
+		// Pjax-ify links.	
 		$(opts.linkSelector).pjax( 
 			$(target).selector, 
 			{
 				data: resconParams()
 			}
 		)
+		// Run afterload callback after back/forward button
+		$(window).bind('pjax:popstate', function(event){
+			opts.afterLoad();
+		});
 	}
 
 	// Fire post load actions
