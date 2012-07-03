@@ -1,17 +1,18 @@
 # Responsive Content
 
-Responsive Content is a jQuery plugin that helps you serve different content to different devices. 
+A jQuery plugin that helps you serve different content to different devices. 
+
+Responsive Content doesn't use User Agent detection, relying only on window/screen width 
+and secondary device capabilities. HTML page content is loaded as a single fragment by Ajax
+and inserted into a container element. Each Ajax fragment request carries device-dependent 
+query values which can be referred to on the server side to tailor the returned HTML fragment 
+to the current device.
 
 Whilst it can be used in parallel with CSS Responsive Design, it does something else completely. 
 For a given screen size Responsive Design applies different styling to _identical_ content, whereas
 Reponsive Content will actually load _different_ content. It can be used subtly - for instance to load 
 smaller images on smaller devices - or to deliver radically different markup to distinct ranges of window width.  
 
-Reponsive Content doesn't use User Agent detection, relying only on window/screen width 
-and secondary device capabilities. HTML page content is loaded as a single fragment by Ajax
-and inserted into a container element. Each Ajax fragment request carries device-dependent 
-query values which can be referred to on the server side to tailor the returned HTML fragment 
-to the current device.
 
 ### Client Side
 
