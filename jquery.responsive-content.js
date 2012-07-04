@@ -81,6 +81,9 @@ $.fn.responsiveContent = function( useropts ){
 	if ( widthCurrent > opts.widths[0] || opts.forceLoad ) {
 		reloadContent();
 	}
+  else {                       
+		doAfterLoad();
+  }
 
 	// Detech a significant width change, and reload content.
 	$(window).resize(function() {
@@ -99,19 +102,27 @@ $.fn.responsiveContent = function( useropts ){
 		$(opts.linkSelector).pjax( 
 			$(target).selector, 
 			{
-				data: resconParams()
+				data: resconParams(),
+				scrollTo: 0
 			}
 		)
 		// Run afterload callback after back/forward button
 		$(window).bind('pjax:popstate', function(event){
-			opts.afterLoad();
+			doAfterLoad();
 		});
 	}
 
 	// Fire post load actions
 	$(target).on('pjax:success', function(){
-		opts.afterLoad();
+		doAfterLoad();
 	});
+
+	// Fire post load actions
+	function doAfterLoad(){
+		setTimeout( function(){
+			opts.afterLoad();
+		});
+	};
 
 } // close: $.fn.responsiveContent
 
