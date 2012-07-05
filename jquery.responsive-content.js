@@ -57,7 +57,7 @@ $.fn.responsiveContent = function( useropts ){
 	function reloadContent() {
 		$.pjax({
 			url: window.location.pathname + window.location.search,
-			data: resconParams(),
+			data: $.extend( { _rescon_reload:1 }, resconParams() ),
 			container: target,
 			push: false,
 			replace: $.support.pjax 
@@ -85,7 +85,7 @@ $.fn.responsiveContent = function( useropts ){
 		doAfterLoad();
   }
 
-	// Detech a significant width change, and reload content.
+	// Detect a significant width change, and reload content.
 	$(window).resize(function() {
 		var widthNew = getMinWidth();
 		for( var i=0; i<opts.widths.length; i++ ) {
