@@ -32,6 +32,7 @@ $('#contentContainer').responsiveContent({
 The query parameters passed by each Ajax request are:
 ```
 _rescon            // Indicates that a HTML fragment should be served.
+_rescon_reload     // Equals 1 when the request is a 'same page' reload, i.e. screen width exceeds the lowest (non-zero) breakpoint. 
 _rescon_width      // The lower breakpoint of the window width, from a set of width breakpoints. Integer. 
 _rescon_touch      // The device has touch/swipe capability. true|false
 _rescon_pixelratio // 1 for normal screen. 2 for some iPads etc. Probably an integer...
