@@ -84,8 +84,7 @@ images in articles.
 [Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens mobile. Images in the front page top section
 and in articles decrease in (actual) size for smaller screens.
 
-These sites also use Responsive Design.
+(These sites also use Responsive Design.)
 
 ***
-Responsive Content is by [Stephan Fowler](http://uk.linkedin.com/in/stephanfowler), and is a fork of 
-the wonderful [Pjax](https://github.com/defunkt/jquery-pjax).
+Responsive Content is a fork of [Pjax](https://github.com/defunkt/jquery-pjax).
