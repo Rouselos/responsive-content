@@ -78,11 +78,11 @@ that is loaded.
 ### Example Sites
 
 [The Chap Magazine](http://thechapmagazine.co.uk/). The 
-number of articles on the front page decreases on lower window sizes, as does the (actual) size of 
+number of articles on the front page decreases on lower window sizes, as does the actual size of 
 images in articles.
 
 [Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens mobile. Images in the front page top section
-and in articles decrease in (actual) size for smaller screens.
+and in articles decrease in actual size for smaller screens.
 
 (These sites also use Responsive Design.)
 
