@@ -77,9 +77,14 @@ that is loaded.
 
 ### Example Sites
 
-[The Chap Magazine](http://thechapmagazine.co.uk/) has subtly responsive content; the 
-number of articles on the front page decreases as you shrink the window size, as does the the size of 
-images in articles. The site also uses Responsive Design.
+[The Chap Magazine](http://thechapmagazine.co.uk/). The 
+number of articles on the front page decreases on lower window sizes, as does the (actual) size of 
+images in articles.
+
+[Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens mobile. Images in the front page top section
+and in articles decrease in (actual) size for smaller screens.
+
+These sites also use Responsive Design.
 
 ***
 Responsive Content is by [Stephan Fowler](http://uk.linkedin.com/in/stephanfowler), and is a fork of 
