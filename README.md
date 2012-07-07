@@ -82,7 +82,7 @@ number of articles on the front page decreases on lower window sizes, as does th
 images in articles.
 
 [Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens mobile. Images in the front page top section
-and in articles decrease in actual size for smaller screens.
+and in articles decrease in actual size for smaller screens. Section pages have fewer article links on smaller screens.
 
 (These sites also use Responsive Design.)
 
