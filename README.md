@@ -16,16 +16,30 @@ smaller images on smaller devices - or to deliver radically different markup to 
 
 ### Client Side
 
-Call it on a jQuery selector wrapper that returns a single content-container element: 
+Call it on a jQuery selector wrapper that returns a single content-container element. 
 
 ```javascript
 $('#contentContainer').responsiveContent({
-  afterLoad: function(){}, // Optional. A callback function to run after each ajax load
-  forceLoad: false, // Optional. Force an initial ajax load, perhaps if you don't have default content. Default is false
-  linkSelector: 'a', // Optional. A jQuery selector for links that should cause ajax loading. Default is 'a'.
-  widths: [ 0, 640 ] // Optional. Width breakpoints. Default is [ 0, 481, 768, 1024 ].
+  widths: [ 0, 481, 768, 1025 ],
+  afterLoad: function(){}, 
+  forceLoad: false,
+  resizeLoad: false,
+  linkSelector: 'a'
 })
 ```
+Theses settings are all optional. They are shown above with their default values.
+
+* **widths**: An array of screen width break-points. First element should be 0.
+
+* **afterLoad**: A callback function to run secondary logic after each load. This function is called ONCE 
+per logical "page", even if an initial page entails an ajax reload (i.e. for "wider" content) or if any page is resized (i.e. when resizeLoad: true)
+
+* **forceLoad**: Force an initial fragment load. Normally this only happens if getMinWidth > widths[0], but you may need to force a reload of you do not provide
+default content.
+
+* **resizeLoad**: Reload the fragment when window is resized beyond a width breakpoint. If false, the screen-width is reported. If true, the window-width is reported.
+
+* **linkSelector**: The jQuery selector for which anchors to pjaxify. Must only select html A tags.
 
 ### Server Side
 

@@ -23,7 +23,7 @@ $.fn.responsiveContent = function( useropts ){
 
 	var opts = $.extend(
 		{
-			widths: [ 0, 481, 768, 1024 ],        // Screen width break-points.
+			widths: [ 0, 481, 768, 1025 ],        // Screen width break-points.
 			afterLoad: function(){ return this }, // Callback after each content load
 			forceLoad: false,                     // Force an initial fragment load. Normally only does this when getMinWidth > widths[0]
 			resizeLoad: false,                    // Reload fragment when window is resized beyond a width breakpoint.
@@ -82,9 +82,9 @@ $.fn.responsiveContent = function( useropts ){
 	if ( widthCurrent > opts.widths[0] || opts.forceLoad ) {
 		reloadContent();
 	}
-  else {                       
+	else { 
 		doAfterLoad();
-  }
+	}
 
 	// Detect a significant width change, and reload content.
 	$(window).resize(function() {
