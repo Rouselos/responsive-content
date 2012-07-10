@@ -46,7 +46,7 @@ This is important in order to prevent perpetual request loops.
 Make sure that the above `_rescon*` query parameters do not leak through and reappear in anchor 
 href URLs in the returned HTML fragment. 
 
-### Content Flow
+### "Mobile First" Content Flow
 
 If the window width exceeds the 
 first (non zero) breakpoint in your set of defined breakpoints, an Ajax call will be made 
