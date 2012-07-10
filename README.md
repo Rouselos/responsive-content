@@ -46,7 +46,7 @@ This is important in order to prevent perpetual request loops.
 Make sure that the above `_rescon*` query parameters do not leak through and reappear in anchor 
 href URLs in the returned HTML fragment. 
 
-### Content Flow
+### "Mobile First" Content Flow
 
 If the window width exceeds the 
 first (non zero) breakpoint in your set of defined breakpoints, an Ajax call will be made 
@@ -82,7 +82,7 @@ number of articles on the front page decreases on lower window sizes, as does th
 images in articles.
 
 [Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens mobile. Images in the front page top section
-and in articles decrease in actual size for smaller screens.
+and in articles decrease in actual size for smaller screens. Section pages have fewer article links on smaller screens.
 
 (These sites also use Responsive Design.)
 
