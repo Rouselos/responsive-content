@@ -14,13 +14,6 @@ $.fn.responsiveContent = function( useropts ){
 	if ( this.length === 0 )
 		return;
 
-	var 
-		hasTouch = 'ontouchstart' in document.documentElement,
-		pixelRatio = ( window.devicePixelRatio && window.devicePixelRatio > 1 ) ? window.devicePixelRatio : 1,
-		widthCurrent, 
-		nowLoading,
-		target = this; 
-
 	var opts = $.extend(
 		{
 			widths: [ 0, 481, 768, 1025 ],        // Screen width break-points.
@@ -31,6 +24,13 @@ $.fn.responsiveContent = function( useropts ){
 		}, 
 		useropts 
 	);
+
+	var 
+		hasTouch = 'ontouchstart' in document.documentElement,
+		pixelRatio = ( window.devicePixelRatio && window.devicePixelRatio > 1 ) ? window.devicePixelRatio : 1,
+		widthCurrent, 
+		nowLoading,
+		target = this; 
 
 	// Add ajax, screen-width, and other device info to querystr params
 	function resconParams() {
