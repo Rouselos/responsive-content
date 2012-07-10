@@ -31,13 +31,14 @@ Theses settings are all optional. They are shown above with their default values
 
 * **widths**: An array of screen width break-points. First element should be 0.
 
-* **afterLoad**: A callback function to run secondary logic after each load. This function is called ONCE 
-per logical "page", even if an initial page entails an ajax reload (i.e. for "wider" content) or if any page is resized (i.e. when resizeLoad: true)
+* **afterLoad**: A callback function to run secondary logic after each load. This function is called once
+per logical "page", i.e. for each of these scenarios: (1) an initial page requires no ajax reload because the screen width is small 
+thus the default content is sufficient; (2) an initial entails makes an ajax reload for "wider" content; (3) a subsequent click loads in new content; (4) a page is resized (and `resizeLoad:true`)
 
 * **forceLoad**: Force an initial fragment load. Normally this only happens if getMinWidth > widths[0], but you may need to force a reload of you do not provide
 default content.
 
-* **resizeLoad**: Reload the fragment when window is resized beyond a width breakpoint. If false, the screen-width is reported. If true, the window-width is reported.
+* **resizeLoad**: Reload the fragment when window is resized beyond a width breakpoint. If false, the screen-width is used as the metric. If true, the window-width is used as the metric.
 
 * **linkSelector**: The jQuery selector for which anchors to pjaxify. Must only select html A tags.
 
@@ -85,9 +86,8 @@ and independent of User Agent or cookies, and are thus effective as regular cach
 
 ### Window Resizing
 
-If you resize the window width across the defined breakpoints, Ajax calls will be made and the content will 
-be reloaded. This is useful in development, to check how device width variously affects the content 
-that is loaded. 
+If you set `resizeLoad:true` and resize the window width across the defined breakpoints, Ajax calls will be made and the content will 
+be reloaded. This is useful in development, to check how device width variously affects the content that is loaded. 
 
 ### Example Sites
 
