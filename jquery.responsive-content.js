@@ -25,7 +25,8 @@ $.fn.responsiveContent = function( useropts ){
 		{
 			widths: [ 0, 481, 768, 1024 ],        // Screen width break-points.
 			afterLoad: function(){ return this }, // Callback after each content load
-			forceLoad: false,                     // Force an initial load. Normally only does this when getMinWidth > widths[0]
+			forceLoad: false,                     // Force an initial fragment load. Normally only does this when getMinWidth > widths[0]
+			resizeLoad: false,                    // Reload fragment when window is resized beyond a width breakpoint.
 			linkSelector: 'a'                     // The selector for which anchors to pjaxify. Must only select html A tags.
 		}, 
 		useropts 
@@ -43,7 +44,7 @@ $.fn.responsiveContent = function( useropts ){
 	// The lower bound of the width-range that we're in.
 	function getMinWidth() {
 		var width = opts.widths[ opts.widths.length - 1 ]; 
-		var widthTrue = $(window).width(); 
+		var widthTrue = opts.resizeLoad ? $(window).width() : screen.width; // If resizable, we need the (variable) window width, not the (fixed) screen width
 		for( var i=1; i<opts.widths.length; i++ ) {
 			if ( widthTrue < opts.widths[i]) {
 				width = opts.widths[ i - 1 ];
@@ -87,11 +88,13 @@ $.fn.responsiveContent = function( useropts ){
 
 	// Detect a significant width change, and reload content.
 	$(window).resize(function() {
-		var widthNew = getMinWidth();
-		for( var i=0; i<opts.widths.length; i++ ) {
-			if ( ( widthCurrent < opts.widths[i] && widthNew >= opts.widths[i] ) || ( widthCurrent > opts.widths[i] && widthNew <= opts.widths[i] )) { 
-				widthCurrent = opts.widths[i];
-				deferReloadContent();
+		if ( opts.resizeLoad ) {
+			var widthNew = getMinWidth();
+			for( var i=0; i<opts.widths.length; i++ ) {
+				if ( ( widthCurrent < opts.widths[i] && widthNew >= opts.widths[i] ) || ( widthCurrent > opts.widths[i] && widthNew <= opts.widths[i] )) { 
+					widthCurrent = opts.widths[i];
+					deferReloadContent();
+				}
 			}
 		}
 	});
@@ -353,10 +356,6 @@ var pjax = $.pjax = function( options ) {
 			// Scroll to top by default
 			if (typeof options.scrollTo === 'number')
 				$(window).scrollTop(options.scrollTo)
-
-			// Google Analytics support
-			if ( (options.replace || options.push) && window._gaq )
-				_gaq.push(['_trackPageview'])
 
 			// If the URL has a hash in it, make sure the browser
 			// knows to navigate to the hash.
