@@ -16,11 +16,11 @@ $.fn.responsiveContent = function( useropts ){
 
 	var opts = $.extend(
 		{
-			triggerWidth: 768,       // If screen width is greated or equal to triggerWidth, an ajax reload is triggered.
+			triggerWidth: 768,       // If screen width is greater than or equal to triggerWidth, an ajax reload is triggered.
 			afterLoad: function(){}, // Callback after each ajax load
-			emulator: false,         // Reload whenever the window is resized. Switch the metric to window width, rather than screen width.
+			emulator: false,         // Reload whenever the window is resized. Switched the metric to window width, rather than screen width.
 			linkSelector: 'a',       // The selector for anchors that should initiate a reload.
-			capabilities: {}
+			capabilities: {}         // Whatever capabilities (not including screen width) that you might want to pass to the server. 
 		}, 
 		useropts 
 	);
