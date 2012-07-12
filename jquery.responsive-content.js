@@ -16,11 +16,11 @@ $.fn.responsiveContent = function( useropts ){
 
 	var opts = $.extend(
 		{
-			widths: [ 0, 481, 768, 1025 ],        // Screen width break-points.
-			afterLoad: function(){ return this }, // Callback after each content load
-			forceLoad: false,                     // Force an initial fragment load. Normally only does this when getMinWidth > widths[0]
-			resizeLoad: false,                    // Reload fragment when window is resized beyond a width breakpoint.
-			linkSelector: 'a'                     // The selector for which anchors to pjaxify. Must only select html A tags.
+			triggerWidth: 768,       // If screen width is greated or equal to triggerWidth, an ajax reload is triggered.
+			forceLoad: false,        // Force an ajax reload, even if screen width is less triggerWidth.
+			afterLoad: function(){}, // Callback after each ajax load
+			resizeLoad: false,       // Also reload whenever the window is resized.
+			linkSelector: 'a'        // The selector for anchors that should initiate a reload.
 		}, 
 		useropts 
 	);
@@ -28,30 +28,21 @@ $.fn.responsiveContent = function( useropts ){
 	var 
 		hasTouch = 'ontouchstart' in document.documentElement,
 		pixelRatio = ( window.devicePixelRatio && window.devicePixelRatio > 1 ) ? window.devicePixelRatio : 1,
-		widthCurrent, 
 		nowLoading,
 		target = this; 
 
 	// Add ajax, screen-width, and other device info to querystr params
 	function resconParams() {
 		return {
-			_rescon_width: widthCurrent,
+			_rescon_width: getWidth(),
 			_rescon_touch: hasTouch,
 			_rescon_pixelratio: pixelRatio
 		} 
 	}
 
-	// The lower bound of the width-range that we're in.
-	function getMinWidth() {
-		var width = opts.widths[ opts.widths.length - 1 ]; 
-		var widthTrue = opts.resizeLoad ? $(window).width() : screen.width; // If resizable, we need the (variable) window width, not the (fixed) screen width
-		for( var i=1; i<opts.widths.length; i++ ) {
-			if ( widthTrue < opts.widths[i]) {
-				width = opts.widths[ i - 1 ];
-				break;
-			}	 
-		}
-		return width;
+	// The width. By default it's the (fixed) screen width, but could be the (variable) window width if resizeLoad is enabled.
+	function getWidth() {
+		return opts.resizeLoad ? $(window).width() : screen.width; 
 	}
 
 	// Initial content reloader
@@ -65,21 +56,18 @@ $.fn.responsiveContent = function( useropts ){
 		});
 	}
 
-	// Defer loading into a single timeout, so as not to stack up reloads.
+	// Throttle reloads to one per second.
 	function deferReloadContent() {
 		if ( ! nowLoading ) {
 			nowLoading = setTimeout( function(){ 
 				reloadContent();
 				nowLoading = undefined; 
-			}, 250 );
+			}, 1000 );
 		}
 	}
 
-	// Find the relevant "lower bound" width, as enumarated in the opts.widths array.
-	widthCurrent = getMinWidth();
-
 	// If we're greater than or equal to the first significant breakpoint, reload (larger) content
-	if ( widthCurrent > opts.widths[0] || opts.forceLoad ) {
+	if ( getWidth() >= opts.triggerWidth || opts.forceLoad ) {
 		reloadContent();
 	}
 	else { 
@@ -89,13 +77,7 @@ $.fn.responsiveContent = function( useropts ){
 	// Detect a significant width change, and reload content.
 	$(window).resize(function() {
 		if ( opts.resizeLoad ) {
-			var widthNew = getMinWidth();
-			for( var i=0; i<opts.widths.length; i++ ) {
-				if ( ( widthCurrent < opts.widths[i] && widthNew >= opts.widths[i] ) || ( widthCurrent > opts.widths[i] && widthNew <= opts.widths[i] )) { 
-					widthCurrent = opts.widths[i];
-					deferReloadContent();
-				}
-			}
+			deferReloadContent();
 		}
 	});
 
