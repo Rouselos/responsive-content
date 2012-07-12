@@ -17,100 +17,100 @@ $.fn.responsiveContent = function( useropts ){
 	var opts = $.extend(
 		{
 			triggerWidth: 768,       // If screen width is greated or equal to triggerWidth, an ajax reload is triggered.
-			forceLoad: false,        // Force an ajax reload, even if screen width is less triggerWidth.
 			afterLoad: function(){}, // Callback after each ajax load
-			resizeLoad: false,       // Also reload whenever the window is resized.
-			linkSelector: 'a'        // The selector for anchors that should initiate a reload.
+			emulator: false,         // Reload whenever the window is resized. Switch the metric to window width, rather than screen width.
+			linkSelector: 'a',       // The selector for anchors that should initiate a reload.
+			capabilities: {}
 		}, 
 		useropts 
 	);
 
-	var 
-		hasTouch = 'ontouchstart' in document.documentElement,
-		pixelRatio = ( window.devicePixelRatio && window.devicePixelRatio > 1 ) ? window.devicePixelRatio : 1,
-		nowLoading,
-		target = this; 
+	var target = this, nowLoading; 
 
-	// Add ajax, screen-width, and other device info to querystr params
-	function resconParams() {
-		return {
-			_rescon_width: getWidth(),
-			_rescon_touch: hasTouch,
-			_rescon_pixelratio: pixelRatio
-		} 
-	}
+	// Return Ajax request params, pefixed _rescon. Basically screen width, and the device capabilities passed in.
+	getResconParams = (function(){
+		var params = {};
+		for ( var c in opts.capabilities ) {
+			params[ '_rescon_' + c ] = opts.capabilities[c];
+		};
+		return function () {
+			params['_rescon_width'] = getWidth();
+			return params;
+		}
+	})();
 
-	// The width. By default it's the (fixed) screen width, but could be the (variable) window width if resizeLoad is enabled.
-	function getWidth() {
-		return opts.resizeLoad ? $(window).width() : screen.width; 
-	}
+	// The width. By default it's the (fixed) screen width, but could be the (variable) window width if emulator option is enabled.
+	getWidth = (function( emulator ){
+		if ( emulator ) 
+			return function(){ return $(window).width() }; 
+		else
+			return function(){ return screen.width }; 
+	})(opts.emulator)
 
-	// Initial content reloader
-	function reloadContent() {
+	// Initial fragment reloader
+	function reloadFragment() {
 		$.pjax({
 			url: window.location.pathname + window.location.search,
-			data: $.extend( { _rescon_reload:1 }, resconParams() ),
+			data: $.extend( { _rescon_reload:1 }, getResconParams() ),
 			container: target,
 			push: false,
 			replace: $.support.pjax 
 		});
 	}
 
-	// Throttle reloads to one per second.
-	function deferReloadContent() {
-		if ( ! nowLoading ) {
+	// If resizeable, detect a window resize and reload the fragment, throttled to one reload per second.
+	$(window).resize(function() {
+		if ( opts.emulator && ! nowLoading ) {
 			nowLoading = setTimeout( function(){ 
-				reloadContent();
+				reloadFragment();
 				nowLoading = undefined; 
 			}, 1000 );
-		}
-	}
-
-	// If we're greater than or equal to the first significant breakpoint, reload (larger) content
-	if ( getWidth() >= opts.triggerWidth || opts.forceLoad ) {
-		reloadContent();
-	}
-	else { 
-		doAfterLoad();
-	}
-
-	// Detect a significant width change, and reload content.
-	$(window).resize(function() {
-		if ( opts.resizeLoad ) {
-			deferReloadContent();
 		}
 	});
 
 	// If browser supports it...
 	if ( $.support.pjax ) {
-		// Pjax-ify links.	
+		// Pjax-ify links. Will cause a fragment load on click.	
 		$(opts.linkSelector).pjax( 
 			$(target).selector, 
 			{
-				data: resconParams(),
+				data: getResconParams(),
 				scrollTo: 0
 			}
 		)
-		// Run afterload callback after back/forward button
+		// Run the afterload callback after back/forward button
 		$(window).bind('pjax:popstate', function(event){
 			doAfterLoad();
 		});
 	}
 
-	// Fire post load actions
+	// Fire post load actions after each (re)load
 	$(target).on('pjax:success', function(){
 		doAfterLoad();
 	});
 
-	// Fire post load actions
+	// Fire post load actions (on a zero timeout, for good luck)
 	function doAfterLoad(){
 		setTimeout( function(){
 			opts.afterLoad();
 		});
 	};
 
-} // close: $.fn.responsiveContent
+	// Action: if we're greater than or equal to the first significant breakpoint, reload the fragment
+	if ( getWidth() >= opts.triggerWidth ) {
+		reloadFragment();
+	}
+	else { 
+		doAfterLoad(); // We want the afteLoad callback to fire once per "page" - even if it involves no reload.
+	}
 
+}
+
+/* 
+Below is a slightly mod'ed version of Pjax, from https://github.com/defunkt/jquery-pjax
+The mod allows us to use the same ajax loading logic *even if* history.pushState is unsupported,
+so that we can also use it for "initial" (i.e. same url) fragment reloads.
+*/
 
 // Is pjax supported by this browser?
 $.support.pjax =
