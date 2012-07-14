@@ -16,7 +16,7 @@ $.fn.responsiveContent = function( useropts ){
 
 	var opts = $.extend(
 		{
-			triggerWidth: 768,       // If screen width is greater than or equal to triggerWidth, an ajax reload is triggered.
+			breakpoint: 768,         // If screen width is greater than or equal to breakpoint, an ajax reload is triggered.
 			afterLoad: function(){}, // Callback after each ajax load
 			emulator: false,         // Reload whenever the window is resized. Switched the metric to window width, rather than screen width.
 			linkSelector: 'a',       // The selector for anchors that should initiate a reload.
@@ -97,7 +97,7 @@ $.fn.responsiveContent = function( useropts ){
 	};
 
 	// Action: if we're greater than or equal to the first significant breakpoint, reload the fragment
-	if ( getWidth() >= opts.triggerWidth ) {
+	if ( getWidth() >= opts.breakpoint ) {
 		reloadFragment();
 	}
 	else { 

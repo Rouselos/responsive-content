@@ -23,22 +23,22 @@ $('#myContainer').responsiveContent({
 	// options
 })
 ```
-The available options are _all optional_:
+The available options are all optional:
 
-* **triggerWidth**: If the screen width is greater than or equal to this value, an Ajax reload is triggered. Default is 768.
+* `breakpoint` : if the screen width is greater than or equal to this value, an Ajax reload is triggered. Default is 768.
 
-* **afterLoad**: A callback function to run secondary logic after each load. This function is called once
+* `afterLoad` : a callback function to run secondary logic after each load. This function is called once
 per logical "page", i.e. for each of these scenarios: 
-(1) the initial page requires no Ajax reload because the screen width is smaller than triggerWidth; 
-(2) the initial page makes an Ajax reload because screen width is at least triggerWidth;
+(1) the initial page requires no Ajax reload because the screen width is smaller than `breakpoint`; 
+(2) the initial page makes an Ajax reload because screen width is at least `breakpoint`;
 (3) a subsequent click causes a Pjax load; 
 (4) a page is resized (and you've set `emulator: true`). Default is an empty function.
 
-* **emulator**: Reload the fragment when the browser window is resized. Switches the metric to window width, rather than screen width. Default is `false`.
+* `emulator` : reload the fragment when the browser window is resized. Switches the metric to window width, rather than screen width. Default is `false`.
 
-* **linkSelector**: The jQuery selector for elements to Pjax-ify. Must only select anchor tags. The default is `'a'`.
+* `linkSelector` : the jQuery selector for elements to Pjax-ify. Must only select anchor tags. The default is `'a'`.
 
-* **capabilities**: An object containing whatever other capabilities that you might need to pass to the server (screen width is always passed). The default is `{}`.
+* `capabilities` : an object containing whatever other capabilities that you might need to pass to the server (screen width is always passed). The default is `{}`.
 
 For example: 
 
@@ -67,14 +67,14 @@ $('#myContainer').responsiveContent({
 
 The query parameters passed by each Ajax request are:
 
-* **\_rescon**: Indicates that an HTML fragment should be served.
+* `_rescon` : indicates that an HTML fragment should be served.
 
-* **\_rescon\_reload**: Equals 1 when the request is a 'same page' reload, i.e. screen width exceeds `triggerWidth` 
+* `_rescon_reload` : equals 1 when the request is a 'same page' reload, i.e. screen width exceeds `breakpoint` 
 or (only when `emulator: true`) a browser window resize has caused a reload 
 
-* **\_rescon\_width**: The screen width, or (only when `emulator: true`) the window width. 
+* `_rescon_width` : the screen width, or (only when `emulator: true`) the window width. 
 
-* **\_rescon\_&lt;capability&gt;**: The value of the capability. In the above case you could receive `_rescon_touch:true` and `_rescon_pixelratio:2` from an iPhone, for example. 
+* `_rescon_{capability name}` : the value of the capability. In the above example, you might receive `_rescon_touch:true` and `_rescon_pixelratio:2` from an iPhone. 
 
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 
@@ -87,9 +87,9 @@ href attributes in the returned HTML fragment.
 
 ### "Mobile First" Content Flow
 
-If the screen width equals or exceeds the `triggerWidth` value, an Ajax call will be made 
+If the screen width equals or exceeds the `breakpoint` option value, an Ajax call will be made 
 and its response will replace the "default content" in the container element. This default content should be the "mobile first" version of your content.
-If you do not have default content and wish to force an Ajax load in all cases, set `triggerWidth: 0`.
+If you do not have default content and wish to force an Ajax load in all cases, set `breakpoint: 0`.
 
 Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
 container element using [Pjax](https://github.com/defunkt/jquery-pjax). This causes the address bar and
@@ -98,7 +98,7 @@ caches DOM fragments so that post-Ajax page state is maintained when navigating 
 
 NOTE: the latter paragraph only applies to browsers that support `history.pushState`. IE9 does not, for example. 
 In this case the fallback behaviour is to always load the entire page as normal including its default content, 
-followed by device-tailored content via Ajax if the screen width exceeds the `triggerWidth` value.
+followed by device-tailored content via Ajax if the screen width exceeds the `breakpoint` option value.
 
 ### Cache Considerations
 
