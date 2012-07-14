@@ -75,7 +75,7 @@ The query parameters passed by each Ajax GET request are:
 
 * `_rescon_{capability name}` : the value of the capability. (In the above example, you might receive *_rescon_touch:true* and *_rescon_pixelratio:2* from an iPhone.) 
 
-Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
+The server may use these query parameters to conditionally alter the HTML fragment that it returns. How this is done is entirely up to you. 
 
 If the *_rescon* query parameter is present in a request, render a fragment that
 omits all surrounding HTML, especially the &lt;script&gt; tag that contains or externally loads the `$('#myContainer').responsiveContent()` function call. 
