@@ -101,11 +101,12 @@ followed by device-tailored content via Ajax if the screen width exceeds the _br
 
 ### Cache Considerations
 
-The approach is cache-friendly. The URLs for full pages are the same across all devices, since the initial page state is the same for all devices, being progressively enhanced only if the device's screen with merits it. Additionally, all the Ajax requests use the GET method with URLs
-that - with their query parameters - are fully deterministic. The URLs are thus effective as regular cache keys since they are not reliant for their
+The approach is cache-friendly. Firstly, URLs for full pages are the same across all devices since the initial page state is the same for all devices, 
+being progressively enhanced only if the device's screen width merits it. Secondly, all Ajax requests use the GET method with URLs
+that - along with their query parameters - are fully deterministic. The URLs in both cases are thus effective as regular cache keys since they are not reliant for their
 uniqueness on other HTTP request headers such as User Agent or Cookie.
 
-### Device width Emulator
+### Device Emulator
 
 If you set _emulator: true_ and resize the browser window, Ajax calls will be made and the content will 
 be reloaded according to the current _window_ width, rather than the device's screen width. This is useful in development for viewing 
