@@ -6,7 +6,7 @@ Responsive Content doesn't use User Agent detection, relying only on device scre
 and secondary device capabilities. HTML page content is loaded as a single fragment by Ajax
 and inserted into a container element. Each Ajax fragment request carries device-dependent 
 query values which can be referred to on the server side to tailor the returned HTML fragment 
-to the current device.
+to the current device. Subsequent clicks are loaded by [Pjax](https://github.com/defunkt/jquery-pjax).
 
 Whilst it can be used in parallel with CSS Responsive Design, it does something else completely. 
 For a given screen size Responsive Design applies different styling to _identical_ content, whereas
