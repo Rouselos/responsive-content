@@ -27,8 +27,7 @@ The available options are all optional:
 
 * `breakpoint` : if the screen width is greater than or equal to this value, an Ajax reload is triggered. Default is 768.
 
-* `afterLoad` : a callback function to run secondary logic after each load. This function is called once
-per logical "page", i.e. for each of these scenarios: 
+* `afterLoad` : a callback function to run secondary logic after each load. This function is called exactly once for each of these exclusive cases: 
 (1) the initial page requires no Ajax reload because the screen width is smaller than `breakpoint`; 
 (2) the initial page makes an Ajax reload because screen width is at least `breakpoint`;
 (3) a subsequent click causes a Pjax load; 
