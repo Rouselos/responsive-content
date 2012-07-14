@@ -71,7 +71,7 @@ The query parameters passed by each Ajax GET request are:
 * `_rescon_reload` : equals 1 when the request is a reload caused by screen width exceeding _breakpoint_ 
 (or if _emulator: true_ and a browser window resize has caused a reload).
 
-* `_rescon_width` : the screen width, (or the window width when _emulator: true_). 
+* `_rescon_width` : the screen width (or the window width when _emulator: true_). 
 
 * `_rescon_{capability name}` : the value of the capability. (In the above example, you might receive *_rescon_touch:true* and *_rescon_pixelratio:2* from an iPhone.) 
 
