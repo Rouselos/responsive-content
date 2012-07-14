@@ -105,17 +105,18 @@ followed by device-tailored content via Ajax if the screen width exceeds the `tr
 The approach is cache-friendly. URLs for pages and HTML fragments (with their query parts) are deterministic 
 and independent of User Agent or cookies, and are thus effective as regular cache keys. 
 
-### Test with Window Resizing
+### Device width Emulator
 
 If you set `emulator: true` and resize the browser window, Ajax calls will be made and the content will 
-be reloaded. This is useful in development to mimick how different device screen widths affect the content that is loaded. It should be used with caution on production sites. 
-The reloads are throttled to one per second, during the resizing of the browser window.
+be reloaded, according to the current window width, rather than the fixed screen width. This is useful in development for check 
+how the resulting content, but should be used with caution on production sites (for instance if you are pinging analytics services within the `afterLoad` callback.)
+The reloads are throttled to one per second as you drag the browser windon edge.
 
 ### Example Sites
 
 [The Chap Magazine](http://thechapmagazine.co.uk/). The 
 number of articles on the front page decreases on lower screen sizes, as does the actual size of 
-images in articles.
+images in articles. Try it in <a href="http://thechapmagazine.co.uk/#emulator">emulator mode</a>.
 
 [Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens. Images in the front page top section
 and in articles decrease in actual size for smaller screens. Section pages have fewer article links on smaller screens.
