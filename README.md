@@ -77,11 +77,11 @@ The query parameters passed by each Ajax GET request are:
 
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 
-If the `_rescon` query parameter is present in a request, render a fragment that
-omits all surrounding HTML - and especially the &lt;script&gt; tag that contains or loads the `$('#myContainer').responsiveContent()` function call. 
+If the *_rescon* query parameter is present in a request, render a fragment that
+omits all surrounding HTML, especially the &lt;script&gt; tag that contains or externally loads the `$('#myContainer').responsiveContent()` function call. 
 This is important in order to prevent perpetual request loops.
 
-Make sure that the above __rescon*_ query parameters do not leak through and reappear in anchor 
+Ensure also that the above __rescon*_ query parameters do not leak through and reappear in anchor 
 href attributes in the returned HTML fragment. 
 
 ### "Mobile First" Content Flow
