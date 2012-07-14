@@ -51,7 +51,7 @@ $('#myContainer').responsiveContent({
 		pixelratio: window.devicePixelRatio && window.devicePixelRatio > 1 ? window.devicePixelRatio : 1
 	},
 
-	// Switch on the emulator if the url has is #emulator
+	// Switch on the emulator if the url hash is #emulator
 	emulator: /^#emulator$/.test(window.location.hash),
 
 	// ping Google Analytics after each "page"
@@ -69,17 +69,17 @@ The query parameters passed by each Ajax request are:
 
 * `_rescon` : indicates that an HTML fragment should be served.
 
-* `_rescon_reload` : equals 1 when the request is a 'same page' reload, i.e. screen width exceeds `breakpoint` 
-or (only when `emulator: true`) a browser window resize has caused a reload 
+* `_rescon_reload` : equals 1 when the request is a reload caused by screen width exceeding `breakpoint` 
+(or if `emulator: true` and a browser window resize has caused a reload).
 
-* `_rescon_width` : the screen width, or (only when `emulator: true`) the window width. 
+* `_rescon_width` : the screen width, (or the window width when `emulator: true`). 
 
-* `_rescon_{capability name}` : the value of the capability. In the above example, you might receive `_rescon_touch:true` and `_rescon_pixelratio:2` from an iPhone. 
+* `_rescon_{capability name}` : the value of the capability. (In the above example, you might receive `_rescon_touch:true` and `_rescon_pixelratio:2` from an iPhone.) 
 
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 
 If the `_rescon` query parameter is present in a request, render a fragment that
-omits all surrounding HTML - and especially the &lt;script&gt; tag that contains or loads the '$('#myContainer').responsiveContent()' function call. 
+omits all surrounding HTML - and especially the &lt;script&gt; tag that contains or loads the `$('#myContainer').responsiveContent()` function call. 
 This is important in order to prevent perpetual request loops.
 
 Make sure that the above `_rescon*` query parameters do not leak through and reappear in anchor 
