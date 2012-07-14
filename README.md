@@ -28,16 +28,16 @@ The available options are all optional:
 * `breakpoint` : if the screen width is greater than or equal to this value, an Ajax reload is triggered. Default is 768.
 
 * `afterLoad` : a callback function to run secondary logic after each load. This function is called exactly once for each of these exclusive cases: 
-(1) the initial page requires no Ajax reload because the screen width is smaller than `breakpoint`; 
-(2) the initial page makes an Ajax reload because screen width is at least `breakpoint`;
+(1) the initial page requires no Ajax reload because the screen width is smaller than _breakpoint_; 
+(2) the initial page makes an Ajax reload because screen width is at least _breakpoint_;
 (3) a subsequent click causes a Pjax load; 
-(4) a page is resized (and you've set `emulator: true`). Default is an empty function.
+(4) a page is resized (and you've set _emulator: true_). Default is an empty function.
 
-* `emulator` : reload the fragment when the browser window is resized. Switches the metric to window width, rather than screen width. Default is `false`.
+* `emulator` : reload the fragment when the browser window is resized. Switches the metric to window width, rather than screen width. Default is _false_.
 
-* `linkSelector` : the jQuery selector for elements to Pjax-ify. Must only select anchor tags. The default is `'a'`.
+* `linkSelector` : the jQuery selector for elements to Pjax-ify. Must only select anchor tags. The default is _'a'_.
 
-* `capabilities` : an object containing whatever other capabilities that you might need to pass to the server (screen width is always passed). The default is `{}`.
+* `capabilities` : an object containing whatever other capabilities that you might need to pass to the server (screen width is always passed). The default is _{}_.
 
 For example: 
 
@@ -64,16 +64,16 @@ $('#myContainer').responsiveContent({
 ```
 ### Server Side
 
-The query parameters passed by each Ajax request are:
+The query parameters passed by each Ajax GET request are:
 
 * `_rescon` : indicates that an HTML fragment should be served.
 
-* `_rescon_reload` : equals 1 when the request is a reload caused by screen width exceeding `breakpoint` 
-(or if `emulator: true` and a browser window resize has caused a reload).
+* `_rescon_reload` : equals 1 when the request is a reload caused by screen width exceeding _breakpoint_ 
+(or if _emulator: true_ and a browser window resize has caused a reload).
 
-* `_rescon_width` : the screen width, (or the window width when `emulator: true`). 
+* `_rescon_width` : the screen width, (or the window width when _emulator: true_). 
 
-* `_rescon_{capability name}` : the value of the capability. (In the above example, you might receive `_rescon_touch:true` and `_rescon_pixelratio:2` from an iPhone.) 
+* `_rescon_{capability name}` : the value of the capability. (In the above example, you might receive *_rescon_touch:true* and *_rescon_pixelratio:2* from an iPhone.) 
 
 Use these as appropriate to alter the HTML fragment that you return. How you do this is entirely up to you. 
 
@@ -81,40 +81,40 @@ If the `_rescon` query parameter is present in a request, render a fragment that
 omits all surrounding HTML - and especially the &lt;script&gt; tag that contains or loads the `$('#myContainer').responsiveContent()` function call. 
 This is important in order to prevent perpetual request loops.
 
-Make sure that the above `_rescon*` query parameters do not leak through and reappear in anchor 
+Make sure that the above __rescon*_ query parameters do not leak through and reappear in anchor 
 href attributes in the returned HTML fragment. 
 
 ### "Mobile First" Content Flow
 
-If the screen width equals or exceeds the `breakpoint` option value, an Ajax call will be made 
+If the screen width equals or exceeds the _breakpoint_ option value, an Ajax call will be made 
 and its response will replace the "default content" in the container element. This default content should be the "mobile first" version of your content.
-If you do not have default content and wish to force an Ajax load in all cases, set `breakpoint: 0`.
+If you do not have default content and wish to force an Ajax load in all cases, set _breakpoint: 0_.
 
 Subsequent clicks on links will cause new "pages" (i.e. fragments, device tailored) to be loaded into the 
 container element using [Pjax](https://github.com/defunkt/jquery-pjax). This causes the address bar and
 history state to be updated with the link's href URL, ensuring correct back/forward button behaviour. Pjax also 
 caches DOM fragments so that post-Ajax page state is maintained when navigating the history. 
 
-NOTE: the latter paragraph only applies to browsers that support `history.pushState`. IE9 does not, for example. 
+NOTE: the latter paragraph only applies to browsers that support _history.pushState_. IE9 does not, for example. 
 In this case the fallback behaviour is to always load the entire page as normal including its default content, 
-followed by device-tailored content via Ajax if the screen width exceeds the `breakpoint` option value.
+followed by device-tailored content via Ajax if the screen width exceeds the _breakpoint_ option value.
 
 ### Cache Considerations
 
-The approach is cache-friendly. URLs for pages and HTML fragments (with their query parts) are deterministic 
-and independent of User Agent or cookies, and are thus effective as regular cache keys. 
+The approach is cache-friendly. The URLs for full pages are the same across all devices, since the initial page state is the same for all devices, being progressively enhanced only if the device's screen with merits it. Additionally, all the Ajax requests use the GET method with URLs
+that - with their query parameters - are fully deterministic. The URLs are thus effective as regular cache keys since they are not reliant for their
+uniqueness on other HTTP request headers such as User Agent or Cookie.
 
 ### Device width Emulator
 
-If you set `emulator: true` and resize the browser window, Ajax calls will be made and the content will 
-be reloaded, according to the current window width, rather than the fixed screen width. This is useful in development for check 
-how the resulting content, but should be used with caution on production sites (for instance if you are pinging analytics services within the `afterLoad` callback.)
-The reloads are throttled to one per second as you drag the browser windon edge.
+If you set _emulator: true_ and resize the browser window, Ajax calls will be made and the content will 
+be reloaded according to the current _window_ width, rather than the device's screen width. This is useful in development for viewing 
+the resulting content variants, but should be used with caution on production sites (for instance, if you're pinging Google Analytic within the _afterLoad_ callback.)
+The reloads are throttled to maximum of one per second as you drag the browser window edge.
 
 ### Example Sites
 
-[The Chap Magazine](http://thechapmagazine.co.uk/). The 
-number of articles on the front page decreases on lower screen sizes, as does the actual size of 
+[The Chap Magazine](http://thechapmagazine.co.uk/). The number of articles on the front page decreases on lower screen sizes, as does the actual size of 
 images in articles. Try it in <a href="http://thechapmagazine.co.uk/#emulator">emulator mode</a>.
 
 [Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens. Images in the front page top section
