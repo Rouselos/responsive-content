@@ -1,3 +1,4 @@
+
 # Responsive Content
 
 A jQuery plugin that helps you serve different content to different devices. 
@@ -10,7 +11,7 @@ given a particular screen width, the former applies a particular styling to the 
 
 Responsive Content is a coarse-grained content loader, designed to pull an entire block of HTML into the "content" area of a page. 
 The idea is to have "header" and "footer" areas that are common across all devices (styled appropriately using CSS media queries) yet 
-dynamically replace the content area of the page with HTML specifically tailored for the reqiesting-device's width. 
+dynamically replace the content area of the page with HTML tailored to the requesting-device's width. 
 
 The content is loaded as a single HTML fragment using Ajax and inserted into a specified container element. 
 Each fragment request reports the screen width and other device capability information,
@@ -29,15 +30,15 @@ technique is used to ensure that the URL history and address-bar state is correc
 
 The approach meets these critical criteria:
 
-* **Single URLs** : a webpage should have an identical URL whetever device it is viewed on (though the page's components may have device-contingent URLs.)
+* **Single URLs** : a webpage should have an identical URL whatever device it is viewed on (though the page's components may have device-contingent URLs.)
 
 * **Cache Friendliness** : since baseline cacheing arrangements use the URL of a document as its unique key, there should be no reliance on any other parameters; the approach must thus avoid User Agent detection or cookies. 
 
-* **Perfomance Orientation** : devices with lower bandwidth should be the beneficiaries of all performance tradeoffs inherent in the approach. 
+* **Performance Orientation** : devices with lower bandwidths should be the beneficiaries of all performance trade offs inherent in the approach. 
 
 ### Client Side
 
-Call it on a jQuery selector wrapper that returns a single content-container element. 
+Load the file `jquery.responsive-content.js` in a &lt;script&gt; tag, then call the `responsiveContent()` function on a jQuery selector wrapper that returns the (single) content-container element:
 
 ```javascript
 $('#myContainer').responsiveContent({
@@ -48,31 +49,31 @@ The available options are all optional:
 
 * `breakpoint` : if the screen width is greater than or equal to this value, an Ajax reload is triggered. Default is 768.
 
-* `afterLoad` : a callback function to run secondary logic after each load. This function is called exactly once for each of these exclusive cases: 
-(1) the initial page requires no Ajax reload because the screen width is smaller than _breakpoint_; 
-(2) the initial page makes an Ajax reload because screen width is at least _breakpoint_;
-(3) a subsequent click causes a Pjax load; 
-(4) a page is resized (and you've set _emulator: true_). Default is an empty function.
-
 * `emulator` : reload the fragment when the browser window is resized. Switches the metric to window width, rather than screen width. Default is _false_.
 
 * `linkSelector` : the jQuery selector for elements to Pjax-ify. Must only select anchor tags. The default is _'a'_.
 
 * `capabilities` : an object containing whatever other capabilities that you might need to pass to the server (screen width is always passed). The default is _{}_.
 
+* `afterLoad` : a callback function to run secondary logic after each load. This function is called exactly once for each of these exclusive cases: 
+(1) the initial page requires no Ajax reload because the screen width is smaller than _breakpoint_; 
+(2) the initial page makes an Ajax reload because screen width is at least _breakpoint_;
+(3) a subsequent click causes a Pjax load; 
+(4) a page is resized (and you've set _emulator: true_). Default is an empty function.
+
 For example: 
 
 ```javascript
 $('#myContainer').responsiveContent({
+
+	// Switch on the emulator if the url hash is #emulator
+	emulator: /^#emulator$/.test(window.location.hash),
 
 	// Tell the server about the device's touch capability and whether it's a retina screen
 	capabilities: {
 		touch: 'ontouchstart' in document.documentElement,
 		pixelratio: window.devicePixelRatio && window.devicePixelRatio > 1 ? window.devicePixelRatio : 1
 	},
-
-	// Switch on the emulator if the url hash is #emulator
-	emulator: /^#emulator$/.test(window.location.hash),
 
 	// ping Google Analytics after each "page"
 	afterLoad: function(){ 
@@ -105,46 +106,45 @@ This is important in order to prevent perpetual request loops.
 Ensure also that the above __rescon*_ query parameters do not leak through and reappear in anchor 
 href attributes in the returned HTML fragment. 
 
-### "Mobile First" Content Flow
+### Click Behaviour
 
-If the screen width equals or exceeds the _breakpoint_ option value, an Ajax call will be made 
-and its response will replace the "default content" in the container element. This default content should be the "mobile first" version of your content.
-If you do not have default content and wish to force an Ajax load in all cases, set _breakpoint: 0_.
-
-Subsequent clicks on links will cause new fragments to be requested and loaded into the 
+Clicks on links selected by `linkSelector` will cause new fragments to be requested and loaded into the 
 container element using Pjax. This causes the address bar and
 history state to be updated with the link's href URL, ensuring correct back/forward button behaviour. Pjax also 
 caches DOM fragments so that post-Ajax page state is maintained when navigating the history. 
 
-NOTE: the latter paragraph only applies to browsers that support the HTML5 History API. IE9 does not, for example. 
+NOTE: this only applies to browsers that support the HTML5 History API. IE9 does not, for example. 
 In this case the fallback behaviour is to always load the entire page as normal including its default content, 
 followed by device-tailored content via Ajax if the screen width exceeds the _breakpoint_ option value.
 
 ### Performance Considerations
 
-The impact on page-load performance depends on the device's secreen width, its browser's support for HTML5 History API, and whether 
-we are condidering an "entry" page or a "post-click" page. (An entry page is just the first page that a perticulat user visits on the site. 
+The impact on performance depends on the device's screen width, its browser's support for HTML5 History API, and whether 
+we are considering an "entry" page or a "post-click" page. (An entry page is just the first page that a particular user visits on the site. 
 It is not necessarily the home page; for instance the user may click a link on another site to a specific article on this site.)
 
-Compared to a pure CSS Responsive Design approach, the performance impact 
-can be summarised into four classes of device:
+Compared to a "same HTML for all devices approach", and assuming Responsive Content is being used load "lighter" content volumes into smaller devices,
+to  the potential performance impacts can be summarised across four classes of device:
 
-* screen width is less than *breakpoint* and support for 
-History (e.g. iPhones, Android phones): performance increase on entry pages and an even greater increase on post-click pages.
+* screen width less than *breakpoint*, History support 
+(iPhones, Android phones) : 
+performance increase on entry pages and an even greater increase on post-click pages.
 
-* screen width is less than *breakpoint* and no support for
-History (e.g. older phones): performamce increase on both page types.
+* screen width less than *breakpoint*, no History support 
+(older phones) : 
+performamce increase on both page types.
 
-* screen width is at least *breakpoint* and support for
-History (e.g. tablets, desktops running Chrome/Firefox/Safari/IE10): performance decrease on entry pages
-and a performance increase on "post click" pages.
+* screen width at least *breakpoint*, History support 
+(tablets, desktops running Chrome/Firefox/Safari/IE10) : 
+performance decrease on entry pages and a performance increase on "post click" pages.
 
-* screen width is at least *breakpoint* and no support 
-History (e.g. desktops running IE7/8/9): performance decrease on both page types. 
+* screen width at least *breakpoint*, no History support 
+(desktops running IE7/8/9) : 
+performance decrease on both page types. 
 
-Given that the tendancy for the last device class is to diminish over time, the overall effect is for a performance increase - 
-apart from a decrease for entry pages on larger devices. Given that the latter typically have the higher bandwidth connections, 
-the 'Performance Orientation' design criterion is fullfilled.
+With the inevitability that the last device class will diminish and the first will likely grow, the tendency is for an overall performance increase - 
+with the exception of entry pages on larger devices. Given that the latter typically have the higher bandwidth connections, 
+the 'Performance Orientation' design criterion is fulfilled.
 
 ### Cache Considerations
 
@@ -176,3 +176,4 @@ and in articles decrease in actual size for smaller screens. Section pages have 
 
 ***
 Responsive Content is a fork of [Pjax](https://github.com/defunkt/jquery-pjax).
+
