@@ -5,17 +5,19 @@ A jQuery plugin that helps you serve different content to different devices.
 
 Responsive Content loads the content that is appropriate to a device's screen width. It is typically used alongside Responsive Design techniques. 
 Note however that Responsive *Design* and Responsive *Content* act on different levels:
-given a particular screen width, the former applies a particular styling to the *same* content - whereas the latter actually loads _different_ content. It can be used subtly to load smaller images on smaller devices, or to deliver radically different content to different screen widths. 
+given a particular screen width, the former applies a particular styling to the *same* content - whereas the latter actually loads _different_ content. 
+It can be used subtly - for example to cause smaller images to be loaded on smaller devices - or to deliver radically different content to different screen widths. 
 
 ### How it works
 
 Responsive Content is a coarse-grained content loader, designed to pull an entire block of HTML into the "content" area of a page. 
-The idea is to have "header" and "footer" areas that are common across all devices (styled appropriately using CSS media queries) yet 
+The idea is to have "header" and "footer" areas that are common across all devices (styled appropriately using CSS media queries), and to 
 dynamically replace the content area of the page with HTML tailored to the requesting-device's width. 
 
 The content is loaded as a single HTML fragment using Ajax and inserted into a specified container element. 
 Each fragment request reports the screen width and other device capability information,
-allowing the server to tailor the HTML fragment in its response.
+allowing the server to tailor the HTML fragment in its response. How the server does that is dependent on the particular site requirements, server-side languages etc., 
+and is outside the scope of this jQuery plugin. 
 
 As narrow screen widths are generally associated with lower bandwidth connections, we take a "progressive enhancement" or "mobile first" approach: 
 the content area is expected to be pre-populated with the narrow/mobile version of the page content; an Ajax reload is only triggered if the 
@@ -97,13 +99,14 @@ The query parameters passed by each Ajax GET request are:
 
 * `_rescon_{capability name}` : the value of the capability. (In the above example, you might receive *_rescon_touch:true* and *_rescon_pixelratio:2* from an iPhone.) 
 
-The server may use these query parameters to conditionally alter the HTML fragment that it returns. How this is done is entirely up to you. 
-
-If the *_rescon* query parameter is present in a request, render a fragment that
+If the *_rescon* query parameter is present in a request, the server should render a fragment that
 omits all surrounding HTML, especially the &lt;script&gt; tag that contains or externally loads the `$('#myContainer').responsiveContent()` function call. 
 This is important in order to prevent perpetual request loops.
 
-Ensure also that the above __rescon*_ query parameters do not leak through and reappear in anchor 
+The server should use the width and capability parameters to conditionally alter the HTML fragment that it returns. 
+Exactly what this entails is implementation specific and beyond the scope of this jQuery plugin. 
+
+The server should ensure also that the above __rescon*_ query parameters do not leak through and reappear in anchor 
 href attributes in the returned HTML fragment. 
 
 ### Click Behaviour
@@ -124,7 +127,7 @@ we are considering an "entry" page or a "post-click" page. (An entry page is jus
 It is not necessarily the home page; for instance the user may click a link on another site to a specific article on this site.)
 
 Compared to a "same HTML for all devices approach", and assuming Responsive Content is being used load "lighter" content volumes into smaller devices,
-to  the potential performance impacts can be summarised across four classes of device:
+the potential performance impacts can be summarised across four classes of device:
 
 * screen width less than *breakpoint*, History support 
 (iPhones, Android phones) : 
@@ -155,7 +158,7 @@ uniqueness on other HTTP request headers such as User Agent or Cookie.
 
 ### Degradation
 
-The page degrades to the mobile content when Javascript is turned off. With the appropriate use of CSS Responsive Design, this may be rendered acceptably. 
+The page degrades to the mobile content when Javascript is turned off. With the appropriate use of CSS Responsive Design, this may hopefully be rendered acceptably. 
 
 ### Device Emulator
 
