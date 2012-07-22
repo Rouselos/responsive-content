@@ -115,7 +115,7 @@ container element using Pjax. This causes the address bar and
 history state to be updated with the link's href URL, ensuring correct back/forward button behaviour. Pjax also 
 caches DOM fragments so that post-Ajax page state is maintained when navigating the history. 
 
-NOTE: this only applies to <a href="http://caniuse.com/#search=pushstate">browsers that support the HTML5 History API</a>. IE9 does not, for example. 
+NOTE: this only applies to <a href="http://caniuse.com/#feat=history">browsers that support the HTML5 History API</a>. IE9 does not, for example. 
 In this case the fallback behaviour is to always load the entire page as normal including its default content, 
 followed by device-tailored content via Ajax if the screen width exceeds the _breakpoint_ option value.
 
