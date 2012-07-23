@@ -2,16 +2,17 @@
 
 A jQuery plugin that helps you serve different content to different devices. 
 
-Responsive Content loads the content that is appropriate to a device's screen width. It is typically used alongside Responsive Design techniques. 
+Responsive Content is used to load content that is appropriate to the current device's screen size. It is typically used alongside Responsive Design techniques.
 Note however that Responsive *Design* and Responsive *Content* act on different levels:
 given a particular screen width, the former applies a particular styling to the *same* content - whereas the latter actually loads _different_ content. 
-It can be used subtly - for example to cause smaller images to be loaded on smaller devices - or to deliver radically different content to different screen widths. 
+It can be used subtly - for example to cause smaller images to be loaded on smaller devices - or to deliver radically different content to different screen widths 
+or device capabilities. 
 
 ### How it works
 
 Responsive Content is a coarse-grained content loader, designed to pull an entire block of HTML into the "content" area of a page. 
-The idea is to have "header" and "footer" areas that are common across all devices (styled appropriately using CSS media queries), and to 
-dynamically replace the content area of the page with HTML tailored to the requesting-device's width. 
+The idea is to have "header" and "footer" HTML areas that are common across all devices (styled appropriately using CSS media queries), and to 
+dynamically replace the "content" area of the page with HTML tailored to the requesting-device's width or capabilities. 
 
 The content is loaded as a single HTML fragment using Ajax and inserted into a specified container element. 
 Each fragment request reports the screen width and other device capability information,
