@@ -25,7 +25,7 @@ $.fn.responsiveContent = function( useropts ){
 		useropts 
 	);
 
-	var target = this, isReload = true, nowLoading; 
+	var target = this, isInitial = true, nowLoading; 
 
 	// Return Ajax request params, pefixed _rescon. Basically screen width, and the device capabilities passed in.
 	getResconParams = (function(){
@@ -92,8 +92,8 @@ $.fn.responsiveContent = function( useropts ){
 	// Fire post load actions (on a zero timeout, for good luck)
 	function doAfterLoad(){
 		setTimeout( function(){
-			opts.afterLoad(isReload);
-			isReload = false;
+			opts.afterLoad(isInitial);
+			isInitial = false;
 		});
 	};
 

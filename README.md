@@ -57,11 +57,12 @@ The available options are all optional:
 
 * `capabilities` : an object containing whatever other capabilities that you might need to pass to the server (screen width is always passed). The default is _{}_.
 
-* `afterLoad` : a callback function to run secondary logic after each load. This function is called exactly once for each of these exclusive cases: 
+* `afterLoad(isInitial)` : a callback function to run secondary logic after each load. This function is called exactly once for each of these exclusive cases: 
 (1) the initial page requires no Ajax reload because the screen width is smaller than _breakpoint_; 
 (2) the initial page makes an Ajax reload because screen width is at least _breakpoint_;
 (3) a subsequent click causes a Pjax load; 
 (4) a page is resized (and you've set _emulator: true_). Default is an empty function.
+The function has a single boolean argument isInitial, which is true in cases (1) and (2). 
 
 For example: 
 
