@@ -173,10 +173,7 @@ The reloads are throttled to maximum of one per second as you drag the browser w
 [The Chap Magazine](http://thechapmagazine.co.uk/). The number of articles on the front page decreases on lower screen sizes, as does the actual size of 
 images in articles. Try it in <a href="http://thechapmagazine.co.uk/#emulator">emulator mode</a>.
 
-[Metro Blogs](http://blogs.metro.co.uk/). Sidebars are not delivered to small screens. Images in the front page top section
-and in articles decrease in actual size for smaller screens. Section pages have fewer article links on smaller screens.
-
-(These sites also use Responsive Design.)
+[Metro Blogs](http://blogs.metro.co.uk/) uses an evolution of Responsive Content, which adds a "swipable" content area. This library will be published separately on Github in due course.
 
 ***
 Responsive Content is a fork of [Pjax](https://github.com/defunkt/jquery-pjax).
