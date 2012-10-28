@@ -131,8 +131,10 @@ This is important in order to prevent perpetual request loops.</p>
 <p>The server should use the width and capability parameters to conditionally alter the HTML fragment that it returns. 
 Exactly what this entails is implementation specific and beyond the scope of this jQuery plugin. </p>
 
-<p>The server should ensure also that the above _<em>rescon*</em> query parameters do not leak through and reappear in anchor 
+<p>The server should ensure also that the above __rescon*_ query parameters do not leak through and reappear in anchor 
 href attributes in the returned HTML fragment. </p>
+
+<p>Here is a <a href="https://github.com/stephanfowler/responsive-content/blob/master/server-side-example.php">very basic PHP example</a> of the server side logic.</p>
 
 <h3>Click Behaviour</h3>
 
