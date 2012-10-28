@@ -110,6 +110,8 @@ Exactly what this entails is implementation specific and beyond the scope of thi
 The server should ensure also that the above __rescon*_ query parameters do not leak through and reappear in anchor 
 href attributes in the returned HTML fragment. 
 
+Here a [very basic PHP example](https://github.com/stephanfowler/responsive-content/blob/master/server-side-example.php) the server side logic.
+
 ### Click Behaviour
 
 Clicks on links selected by `linkSelector` will cause new fragments to be requested and loaded into the 
