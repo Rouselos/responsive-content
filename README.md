@@ -180,3 +180,5 @@ images in articles. Try it in <a href="http://thechapmagazine.co.uk/#emulator">e
 ***
 Responsive Content is a fork of [Pjax](https://github.com/defunkt/jquery-pjax).
 
+Cited at:
+[thenextweb.com](http://thenextweb.com/dd/2012/10/28/responsive-content-this-jquery-plugin-lets-you-easily-serve-different-html-to-different-devices/)
